@@ -46,11 +46,12 @@ install.packages("devtools")
 devtools::install.github("zakvarty/zvplot")
 ```
 
-3. If you have not already done so, install [Quarto](https://quarto.org/docs/get-started/) to your computer. Detailed instructions can be found at this link.
+3. If you have not already done so, install [Quarto](https://quarto.org/docs/get-started/) to your computer.
 
-4. Compile the hmtl slides
+4. Compile the HTML slides
 
-Run the following code at the command line to render the html slides from the source files. 
+Run the following code at the command line to render the HTML slides from the source files. 
+
 ```
 quarto render 2023-RSS-slides.qmd
 ```
