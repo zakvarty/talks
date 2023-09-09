@@ -1,0 +1,558 @@
+---
+title: "Go Figure!"
+subtitle: "RSS Pre-Conference Workshop 2023"
+author: Zak Varty
+date: ""
+editor: source
+format:
+  revealjs:
+    theme: assets/zv-slides-theme.scss
+    logo: assets/zv-logo-192x192.png
+    bibliography: assets/refs.bib
+    footer: "Go Figure! RSS Pre-Conference Workshop 2023 - Zak Varty"
+    menu: true
+    slide-number: true
+    show-slide-number: all # (all / print / speaker)
+    self-contained: true # (set to true before publishing html to web)
+    chalkboard: false # (conflicts with self-contained)
+      #src: drawings.json
+      #theme: whiteboard
+      #read-only: true
+      #buttons: false
+    width: 1600 # default is 1050
+    height: 900 # default is 850
+    incremental: false
+---
+
+## More Than A Pretty Picture
+
+::::{.columns}
+:::{.column width="65%"}
+Visualisation is a key skill in your data science tool kit:
+
+- Rapidly explore data sets 
+- Model evaluation and diagnostics 
+- Sharing evidence 
+- Telling compelling stories. 
+
+_Reflective exercise, not a tutorial or rulebook._
+:::
+:::{.column width="5%"}
+:::
+:::{.column width="30%"}
+![Warming stripes graphic on the cover of "The Climate Book"](images/the-climate-book-jacket.jpg)
+:::
+::::
+
+
+<!-- ----------------------------------------------------------------------- -->
+# 1: Think About Your Tools {{< fa hammer >}}
+<!-- ----------------------------------------------------------------------- -->
+
+
+## Data visualisation tools {.smaller}
+
+![Coffee consumption, visualised. Jaime Serra Palou.](images/coffee-2.png)
+
+
+
+## Selecting your tools: Analogue or Digital {.smaller}
+
+![Caffeination vs sleep, shown in lego. Elsie Lee-Robbins](images/lego-coffee.jpg) 
+
+
+## Staying in the tidyverse: `{ggplot2}`
+
+::::{.columns}
+:::{.column width="40%"}
+
+<br>
+
+Layered creation of graphics from tidy data. 
+ 
+Learning `{ggplot2}`:
+
+- [Resources](https://ggplot2.tidyverse.org/#learning-ggplot2)
+- [Tutorial](https://www.cedricscherer.com/2019/08/05/a-ggplot2-tutorial-for-beautiful-plotting-in-r/) 
+- [Tidy Tuesday Github](https://github.com/search?p=1&q=tidy+tuesday&type=Repositories)
+  
+:::
+:::{.column width="60%"}
+
+<br>
+
+![](images/grammar-of-graphics-abstract.png)
+:::
+::::
+
+
+
+<!-- ----------------------------------------------------------------------- -->
+# 2: Think About Your Medium {{< fa person-chalkboard >}}
+<!-- ----------------------------------------------------------------------- -->
+
+
+## Where will your plot go?  
+
+::::{.columns}
+:::{.column width="50%"}
+
+_Use cases:_ exploratory analysis, presentation, report / paper, data journalism.
+
+_Considerations:_ 
+
+- Time investment vs quality
+- Image size / format
+- Time spent with graphic
+:::
+:::{.column width="50%"}
+![](images/visualisation-purposes.png)
+:::
+::::
+
+## File types {.smaller}
+
+::::{.columns}
+:::{.column width="50%"}
+- _Bitmap Graphics:_ png, jpeg, gif
+  - made of pixels
+  - smaller file size
+  
+- _Vector Graphics:_ pdf, eps, svg
+  - made of vectors
+  - larger file size
+  
+:::
+:::{.column width="5%"}
+:::
+:::{.column width="45%"}
+![](images/dalle-pixellated-image.png)
+:::
+::::
+
+
+<!-- ----------------------------------------------------------------------- -->
+# 3: Think About Your Audience {{< fa people-group >}}
+<!-- ----------------------------------------------------------------------- -->
+
+
+##  Know your audience
+
+::::{.columns}
+:::{.column width="50%"}
+![](images/user-groups.png)
+:::
+:::{.column width="50%"}
+Who is the intended audience for your visualisation? 
+
+What knowledge do they bring with them? 
+
+What assumptions and biases do they hold?
+
+<br>
+
+Creating _personas_ for distinct user groups can be helpful.
+:::
+::::
+
+
+## Preattentive Attributes {.smaller}
+
+```{r fig.align='center'}
+knitr::include_graphics("images/preattentive-attributes.png")
+```
+<!--<img src="images/pre-attentive-attributes.png" height="10%">-->
+<!--![](images/pre-attentive-attributes.png)-->
+
+
+## First impressions count {.smaller}
+
+
+![Issues with scales, area and perspective](images/average-male-height.jpg)
+
+
+## Visual perception {.smaller}
+
+::::{.columns}
+:::{.column width="50%"}
+<br>
+![Default colour scales](images/saturated-colour-scales.png)
+:::
+:::{.column width="50%"}
+<br>
+![Desaturated colour scales](images/desaturated-colour-scales.png)
+:::
+::::
+
+
+## Alt text, titles and captions
+
+:::{.callout-note icon=false}
+### Captions
+Describes a figure or table so that it may be identified in a list of figures and (where appropriate).
+:::
+
+:::{.callout-note icon=false}
+### Alternative text
+Describes the content of an image for a person who cannot view it. ([Guide to writing alt-text](https://myaccessible.website/infographic/images/images-accessibility-alt-text ))
+:::
+
+:::{.callout-note icon=false}
+### Titles
+Give additional context or identify key findings. Active titles are preferable.
+
+<s>Graph to show how X varies with Y</s> 
+:::
+
+
+## Adding Alt-Text to Images
+
+### HTML
+```html
+<img src="path/to/image.png" alt="Alt text goes here.">
+```
+<br>
+
+### pdf (LaTeX)
+```tex
+\usepackage[tagged, highstructure]{accessibility}
+```
+```tex
+\begin{figure}
+    \centering
+    \includegraphics[]{path/to/image.png}
+    \alt{Alt text goes here.}
+    \caption{Caption goes here.}
+    \label{fig:alt-text-example}
+\end{figure}
+```
+
+## Adding Alt-Text to Images
+
+### Markdown
+
+Great for multi-output documents but many flavours.
+
+_Github / Jupyter:_
+```markdown
+![Alt text goes here.](path/to/image.png)
+```
+
+_Quarto:_ 
+```markdown
+![Caption goes here](path/to/image.png){alt="Alt text goes here"}
+```
+
+## Adding Alt-Text to Plots
+
+When using literate programming alt-text can be added as code block meta-data. 
+
+<br>
+
+In Quarto:
+
+```{r dino-plot-prep}
+library(datasauRus)
+dino <- datasauRus::datasaurus_dozen_wide
+dino_x <- dino$dino_x
+dino_y <- dino$dino_y
+par(bg = NA)
+```
+
+```{r make-dino-plot}
+#| fig-cap: The Datasaurus from the Dino-Dozen.
+#| fig-alt: Scatterplot in which the points form the outline of a T-Rex.
+#| echo: fenced
+#| output-location: slide
+par(bg = NA)
+plot(x = dino_x,y = dino_y, pch = 16, asp = 1)
+```
+
+<!-- ----------------------------------------------------------------------- -->
+# 4: Think About Your Story {{< fa book-open >}}
+<!-- ----------------------------------------------------------------------- -->
+
+
+## Data visualisation as storytelling 
+
+::::{.columns}
+:::{.column width="50%"}
+![](images/entertain-persuade-inform.png)
+:::
+:::{.column width="50%"}
+<br>
+
+- Where does your purpose fall on this triangle? 
+
+- No such thing as neutral presentation. 
+
+- Start with a hook.
+:::
+::::
+
+<!-- ----------------------------------------------------------------------- -->
+# 5: Think About Your Guidelines {{< fa pen-to-square >}}
+<!-- ----------------------------------------------------------------------- -->
+
+## Standardise and document it 
+
+<br>
+
+Decisions cost time, energy and money. (DRY)
+
+<br>
+
+Consider your design choices carefully and write down your decisions and reasoning. (DRY)
+
+<br>
+
+This will form the basis of your own _style-guide for data visualisation_. 
+
+
+## Style guides for data visualisation 
+
+::::{.columns}
+:::{.column width="50%"}
+
+- BBC 
+  - [Infographics Guidelines](https://www.bbc.co.uk/gel/features/how-to-design-infographics )
+  - [R Cookbook](https://bbc.github.io/rcookbook/)
+  - [`{bbplot}`](https://github.com/bbc/bbplot)
+  
+- [The Economist](https://design-system.economist.com/documents/CHARTstyleguide_20170505.pdf) 
+:::
+:::{.column width="50%"}
+
+- [The Office for National Statistics](https://style.ons.gov.uk/category/data-visualisation/)
+
+- [Eurostat](https://ec.europa.eu/eurostat/web/products-eurostat-news/-/STYLE-GUIDE_2016)
+
+- [Urban Institute](https://urbaninstitute.github.io/graphics-styleguide/)
+
+- [The Pudding](https://pudding.cool/resources/) (learning resources)
+:::
+::::
+
+
+## A Worked example {.smaller}
+
+- {{< fa hammer >}} Quarto, R and `{ggplot}`.
+
+- {{< fa person-chalkboard >}} Blog post: women in politics.
+
+- {{< fa people-group >}} General audience, familiar with UK politics.
+
+- {{< fa book-open >}} Representation of women in parliament is improving over time.
+
+- {{< fa pen-to-square >}} Style guidelines of blog and political parties. 
+
+```{r}
+# load data
+library(ggplot2)
+library(dplyr)
+mps <- readxl::read_xlsx("data/MPs.xlsx", sheet = "4. Women", skip = 1)
+
+politicols <- c(
+  "Conservative" = "#1457AD", 
+  "Labour" = "#9F0029",
+  "Liberal Democrat" = "#FAA61A",
+  "Other" = "grey70") 
+
+politicols_2 <- c(
+  "Conservative" = "grey70", 
+  "Labour" = "#E4003B",
+  "Liberal Democrat" = "grey75",
+  "Other" = "grey85") 
+
+title_text <- "Number of Seats Won by Women in UK General Elections"
+subtitle_text <- "Data: House of Commons Library"
+# tidy data
+tidy_mps <- mps %>% 
+  select(
+    year = Election,
+    con = CON,
+    lab = LAB,
+    ld = LD,
+    other = Other
+  ) %>%
+  tidyr::pivot_longer(
+    cols = c(con, lab, ld, other),
+    names_to = "party",values_to = "count") %>% 
+  mutate(party = as.factor(party))
+
+levels(tidy_mps$party) <- c("Conservative", "Labour", "Liberal Democrat", "Other")
+
+# plotting iterations
+
+p0 <- tidy_mps %>% 
+  ggplot() +
+  geom_line(aes(y = count, x = year, group = party, col = party)) 
+
+p1 <- tidy_mps %>% 
+  ggplot() +
+  geom_line(
+    aes(y = count, x = year, group = party, col = party),
+    lwd = 1.25) + 
+  ggtitle(title_text, subtitle_text) +
+  labs(colour = "Party:") +
+  zvplot::theme_zv() + 
+  theme(panel.grid.minor.y = element_blank(),
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(), 
+        plot.title.position = "plot", 
+        legend.position = "top")
+
+p2 <- tidy_mps %>% 
+  ggplot() +
+  geom_line(
+    aes(y = count, x = year, group = party, col = party),
+    lwd = 1.25) + 
+  ggtitle(title_text, subtitle_text) +
+  labs(colour = "Party:") +
+  scale_colour_manual(values = politicols) +
+  zvplot::theme_zv() + 
+  theme(panel.grid.minor.y = element_blank(),
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(), 
+        plot.title.position = "plot", 
+        legend.position = "top")
+
+
+p3 <- tidy_mps %>% 
+  ggplot() +
+  geom_line(
+    aes(y = count, x = year, group = party, col = party),
+    lwd = 1.25) + 
+  ggtitle(title_text, subtitle_text) +
+  labs(colour = "Party:") +
+  scale_colour_manual(values = politicols_2) +
+  zvplot::theme_zv() + 
+  theme(panel.grid.minor.y = element_blank(),
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(), 
+        plot.title.position = "plot", 
+        legend.position = "top")
+```
+
+## Out of the Box: A First Attempt 
+
+
+```{r}
+#| fig-align: center
+#| fig-alt: "line plot of the number of seats won by women in UK general elections, 1920-2020. Counts are shown for Conservative, Labour, Liberal Democrat and Other parties. Default styles from ggplot2 have been used."
+p0
+```
+
+## Applying Blog Styling 
+
+```{r}
+#| fig-align: center
+#| fig-alt: "line plot of the number of seats won by women in UK general elections, 1920-2020. Counts are shown for Conservative, Labour, Liberal Democrat and Other parties. A blog's style guide has been applied."
+p1
+```
+
+## Fix Confusing Colours
+
+```{r}
+#| fig-align: center
+#| fig-alt: "line plot of the number of seats won by women in UK general elections, 1920-2020. Counts for Conservative, Labour, Liberal Democrat and Other parties shown in conventional party colours."
+p2
+```
+## Highlight important takeaway 
+
+```{r}
+#| fig-align: center
+#| fig-alt: "line plot of the number of seats won by women in UK general elections, 1920-2020. Labour seats are shown in red and all other parties in greyscale to direct attention to the labour results."
+p3
+```
+
+## Wrapping up 
+
+- {{< fa hammer >}} Think about your _tools_
+
+- {{< fa person-chalkboard >}} Think about your _medium_
+
+- {{< fa people-group >}} Think about your _audience_
+
+- {{< fa book-open >}} Think about your _story_
+
+- {{< fa pen-to-square >}} Think about your _guidelines_
+
+
+## Image Credits {.smaller}
+
+* The Climate Book - [Penguin](https://www.penguin.co.uk/books/446610/the-climate-book-by-thunberg-greta/9780241547472) 
+
+* Coffee Cup -  [Jaime Serra Palou](https://www.domestika.org/pt/projects/417262-cafe-diario)
+
+* Lego coffee - [Elsie Lee-Robbins](https://mobile.twitter.com/elsieleerobbins/status/1603486802144288771) via Twitter
+
+
+* Pre-attentive attributes - Adapted from [Better Data Visualizations](http://cup.columbia.edu/book/better-data-visualizati
+ons/9780231193115)
+
+* Male Heights - [patient.info](https://patient.info/news-and-features/whats-the-average-height-for-men)
+
+* Desaturated colour scales - `{viridis}` [documentation](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html)
+
+## Further Resources 
+
+> RSS [Best Practices for Data Visualisation](https://royal-statistical-society.github.io/datavisguide/)
+>
+> How to make data outputs more readable, accessible, and impactful.
+>
+> 11:40-13:00 Tuesday, 5 September, 2023, Auditorium
+
+- [Reading list](https://eds-notes.zakvarty.com/600-reading-list#edav-reading)
+
+- [Jupyter Accessibility Workshop](https://github.com/Quansight-Labs/jupyter-accessibility-workshops/blob/main/docs/alt-text-guide.md)
+- [SuperCool blog post](https://supercooldesign.co.uk/blog/how-to-write-good-alt-text)
+
+# Activity!
+
+## Exercise 1: Text to Plot
+
+Split into 5 groups and spread around the room. 
+
+
+> Try to draw the plot based on the alt-text provided. 
+
+```{r}
+countdown::countdown(8)
+```
+
+
+## Exercise 2: Plot to Text 
+
+<br>
+
+Now for the inverse problem:
+
+<br>
+
+> Write your own alt-text based on the plot provided. 
+
+```{r}
+countdown::countdown(8)
+```
+
+## Exercise 3: Text to plot
+
+<br>
+
+Put your alt-text to the test:
+
+<br>
+
+> Pass your alt-text to another group. They have to try and recreate your plot! 
+
+```{r}
+countdown::countdown(8)
+```
+
+
+## Build Information {.smaller}
+
+```{r}
+pander::pander(sessionInfo())
+```
