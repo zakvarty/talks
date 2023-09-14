@@ -53,14 +53,14 @@ devtools::install.github("zakvarty/zvplot")
 Run the following code at the command line to render the HTML slides from the source files. 
 
 ```
-quarto render 2023-RSS-slides.qmd
+quarto render 2023-RSS-go-figure.qmd
 ```
 
 5. Export HTML slides to PDF using Google Chrome
 
 Other browsers can be used, but at the time of writing Chrome is currently the only official recommend method. 
 
-	- Open the newly created `2023-RSS-slides.html` in Google Chrome
+	- Open the newly created `2023-RSS-go-figure.html` in Google Chrome
 	- Press "e" to enter export mode 
 	- From the Chrome menu, select File > Print
 	- Set "destination" to "Save to PDF"
