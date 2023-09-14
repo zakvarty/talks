@@ -1,0 +1,252 @@
+---
+title: "Getting Your Work to Work <br> in Academia (and Beyond!)"
+subtitle: "RSS Conference 2023"
+author: Zak Varty
+date: ""
+editor: source
+format:
+  revealjs:
+    theme: zv-slides-theme.scss #eds-slides-theme.scss #(default / dark / simple)
+    logo: assets/zv-logo-192x192.png
+    bibliography: assets/refs.bib
+    footer: "Getting Your Work to Work -  RSS Conference 2023 - Zak Varty"
+    menu: true
+    slide-number: true
+    show-slide-number: all # (all / print / speaker)
+    self-contained: true # (set to true before publishing html to web)
+    chalkboard: false # (conflicts with self-contained)
+      #src: drawings.json
+      #theme: whiteboard
+      #read-only: true
+      #buttons: false
+    width: 1600 # default is 1050
+    height: 900 # default is 850
+    incremental: false
+---
+
+## Talk Structure
+
+1. Replicable vs Reproducible work
+2. Reproducible Research
+3. Reproducible Teaching 
+4. Reproducible Service
+
+. . . 
+
+A combination of theft, anecdotes and commentary.
+
+## Some awesome people this talk is riffing on 
+
+::::{.columns}
+:::{.column width="47.5%"}
+- Sharla Gelfand:  [Don't repeat yourself, talk to yourself](https://youtu.be/JThd3YYQXGg?si=NpjzwVI7I0oKYUTW).
+- Rohan Alexander: [Toronto Workshop on Reproducibility](https://canssiontario.utoronto.ca/event/toronto-workshop-on-reproducibility-2023/) +  ([playlist](https://youtube.com/playlist?list=PLwguz_8_VvKMjAI6Xyzr2Wc8JIaIJy3Gy&si=gXbHjLsDVm56HmnR)), [Telling Stories with Data](https://tellingstorieswithdata.com/)
+- The internet at large.
+:::
+:::{.column width="5%"}
+:::
+:::{.column width="47.5%"}
+- Jenny Bryan: [Naming things](https://github.com/jennybc/how-to-name-files), [R packages](https://r-pkgs.org/),  [rstats.wtf](https://rstats.wtf/), [happy git with R](https://happygitwithr.com/), ... 
+
+```{r}
+#| out-width: 40%
+#| fig-align: center
+#| fig-alt: "Hexagonal sticker with a picture of a burning laptop and the acronym EIKIFJB. This stands for 'Everything I know is from Jenny Bryan' and is a quote from Sharla Gelfand."
+knitr::include_graphics("images/EIKIFJB_sigmar_hex.png")
+```
+
+:::
+::::
+
+# Replication vs Reproducibility
+
+## Replication 
+
+> _Replicable:_ if the experiment were repeated by an independent investigator, you would get slightly different data but would the substative conclusions be the same? 
+
+- In the specific sense, this is the core worry for a statistician! 
+
+- Also used more generally: are results stable to perturbations in population / study design / modelling / analysis? 
+
+- Only real test is to try it. Control risk with shadow and parallel deployment.
+
+
+## Reproducibility
+
+>_Reproducible:_ given the original raw data and code, can you get all of the results again?
+
+
+- Reproducible != Correct
+
+- "Code available on request" is the new "Data available on request"
+
+- Reproducible data analysis requires effort, time and skill.
+
+
+## Reproducibility is not Binary
+
+<br>
+
+> A study is <em>reproducible</em> if <b>you</b> can take <b>the original data and the computer code</b> used to analyze the data and <b>recreate all of the numerical findings</b> from the study.
+> <br><br>
+>
+> @broman2017recommendations "Recommendations to Funding Agencies for Supporting Reproducible Research"
+
+
+
+## What can we do?
+
+::::{.columns}
+:::{.column width="50%"}
+- __Replication crisis requires system level solutions and cultural change.__ 
+   - Publishing null results
+   - Documenting our forking paths
+   - Fund replications and novelty
+:::
+:::{.column width="50%"}
+- __Reproducibility we can work on at individual level.__ 
+  - All the standard coding stuff: seeds, projects, portable file paths
+  - Who, what, when, where, why and how? 
+:::
+
+Reproducibility is __good for science__ and __good for the individual__.
+::::
+
+# Research 
+
+## Sharing Code and Data
+
+::::{.columns}
+:::{.column width="47.5%"}
+```{r}
+#| out-width: 80%
+#| fig-align: center
+#| fig-alt: "The GitHub sign in page."
+knitr::include_graphics("images/github.png")
+```
+:::
+:::{.column width="5%"}
+:::
+:::{.column width="47.5%"}
+```{r}
+#| out-width: 80%
+#| fig-align: center
+#| fig-alt: "The latest rearch papers on the papers with code website."
+knitr::include_graphics("images/papers-with-code.png")
+```
+:::
+::::
+
+Publicly sharing code as well as data: importance of documentation & testing. 
+
+## Literate Programming for Papers
+
+```{r}
+#| fig-align: center
+#| fig-alt: "Githut repo for the quarto-journals extension. Quarto templates are available for submission to publishers and journals including Elsevier and the Journal of the American Statistical Association."
+knitr::include_graphics("images/quarto-journal-templates.png")
+```
+
+## Writing Software
+
+::::{.columns}
+:::{.column width="45%"}
+- _Why:_ People have finite energy. Make it easy to recreate, use and extend your work.
+- _Who:_ Specialists in other areas, statisticians, future you.
+- _Examples:_ spatial statistics, changepoints and HMMs.
+:::
+:::{.column width="10%"}
+:::
+:::{.column width="45%"}
+
+```{r}
+#| fig-align: center
+#| out-width: 70%
+#| fig-alt: "Cover of the R Packages book by Hadley Wickham and Jennifer Bryan. The subtitle reads 'Organize, Test, Document and Share Your Code'. An illustration of Kia bird decorates the cover."
+knitr::include_graphics("images/cover-2e-small.png")
+```
+:::
+::::
+
+
+# Teaching 
+
+## Teaching Materials
+
+Teaching materials made with literate programming or WYWIWYG:
+
+::::{.columns}
+:::{.column width="50%"}
+- Text-based so plays nicely with version control
+- Multiple outputs from same source (html, pdf, slides)
+- DRY principle for assessments
+- Leading by example
+:::
+:::{.column width="5%"}
+:::
+:::{.column width="45%"}
+![](images/quarto-website.png){fig-alt="Homepage of quarto.org, an open-source scientific and technical publishing system. A bullet point list highlights the ability to write dynamic content with Python, R, Julia and Observable, as well as producing outputs in a range of formats."}
+:::
+::::
+
+## Individualised Assessments
+
+Steal from reproducible reporting to give each student their own dataset to analyse and produce individualised mark schemes. 
+
+```{r}
+#| fig-align: center
+#| out-width: 30%
+#| fig-alt: "Hand drawn confusion matrix and gender symbols. A circle above a cross signifies female, and a circle below an arrow pointing diagonally upward to the right signifies male."
+knitr::include_graphics("images/fairness-sketch.png")
+```
+
+## Teaching reproducibility {.smaller}
+
+::::{.columns}
+:::{.column width="50%"}
+- Training current / future colleges. 
+
+
+- Good programmes cover reproducible modelling
+  - Need to consider reproducible _workflow_
+  - Data acquisition, cleaning, documentation, naming, reporting, automation, scaling.
+
+
+- Notebooks controlled environment but more need for scripting and literate reporting.
+  - HARD because of the mix of languages / OS / backgrounds.
+:::
+:::{.column width="2.5%"}
+:::
+:::{.column width="47.5%"}
+<br>
+<br>
+```{r}
+#| fig-align: center
+#| out-width: 90%
+#| fig-alt: "An idealised data science project cycle. The stages are: scope, fund, get data, clean data, transform data, model / test, evaluate, communicate, productionize, deploy, monitor, update. These are coloured to indicate whether they primarily rely on statistical skills, computing skills or interpersonal skills."
+knitr::include_graphics("images/data-science-cycle.png")
+```
+:::
+::::
+
+# Service 
+
+## Reproducibilty in the broder sense 
+
+Can also take a broader view of reproducibility: monotonous jobs you have to do repeatedly that take a long time to do. 
+
+<br>
+
+__From my experience:__
+
+-  *Scripting:* File organisation and LMS. 
+-  *Individual:* Individual feedback forms from rubric spreadsheet. (!)
+
+## Wrapping up 
+
+1. Replication requires structural and cultural change, but reproducibility starts with you.
+2. Reproducibility is not just good science, it's in your own self interest.
+3. Teaching reproducibility reproducibly is essential (and fun), but challenging.
+4. Get inventive with automation and reproducibility.
+
+## Citations

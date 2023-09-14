@@ -1,0 +1,100 @@
+/*-- scss:defaults --*/
+
+// Text
+
+@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Oxygen:wght@200;300;400;500;600;700;800;900&display=swap");
+
+$body-font-family: 'Oxygen', Arial, sans-serif !important;
+$title-font-family: 'Oswald', Georgia, serif !important;
+
+$presentation-font-size-root: 32pt;
+$code-block-font-size: 0.8em;
+$fig-caption-font-size: 0.6em;
+$presentation-h1-font-size: 2.0em;
+$presentation-h2-font-size: 1.6em;
+$presentation-h3-font-size: 1.3em;
+$presentation-h4-font-size: 1.1em;
+$presentation-line-height: 1.5em;
+$navlink-active-weight: 600;
+
+// Colours
+$zv-black:  #202020;
+$zv-white:  #FAFAFA;
+$zv-grey:   #EEEEEE;
+$zv-teal:   #0AB3C7;
+$zv-fuchia: #C81E87;
+$zv-blue:   #3D52D5;
+$zv-orange: #E87800;
+$zv-navy:   #003E74;
+
+$body-color: $zv-black;
+$primary: $zv-black;
+$link-color: $zv-orange;
+$body-bg: $zv-white;
+$code-block-bg: $zv-grey;
+$code-block-border-color: $zv-black;
+$code-color: $zv-fuchia;
+
+
+h1, h2, h3, h4 {
+  font-family: $title-font-family;
+}
+
+h2 { // Pad slide titles
+  padding-top: -0.1em;
+  padding-bottom: 0.7em;
+}
+
+p, li {
+  font-family: $body-font-family;
+  font-weight: lighter;
+}
+
+li {
+  padding-top:    0.6em;
+  padding-bottom: 0.6em;
+}
+
+.slide-number {
+  font-family: $body-font-family;
+}
+
+strong {
+  color: $zv-black;
+  font-weight: bolder;
+}
+
+em {
+    color: $zv-orange;
+}
+
+/*-- scss:rules --*/
+
+.reveal .slide figure > figcaption{
+  font-family: $body-font-family;
+  font-size: $fig-caption-font-size;
+}
+
+.reveal .slide-logo {
+  max-height: 3.5% !important;
+}
+
+.reveal .progress {
+  background: $zv-grey;
+  color: $zv-orange;
+  height: 0.7%;
+}
+
+.code_class {
+height: 700px;
+width: 1200px;
+}
+
+.vertical-center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
