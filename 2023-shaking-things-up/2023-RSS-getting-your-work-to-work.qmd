@@ -1,0 +1,498 @@
+---
+title: "Shaking Things Up: <br> Statistical Modelling of Earthquakes"
+subtitle: "RSS Avon Local Group Meeting"
+author: Zak Varty
+date: ""
+editor: source
+format:
+  revealjs:
+    theme: zv-slides-theme.scss #eds-slides-theme.scss #(default / dark / simple)
+    logo: assets/zv-logo-192x192.png
+    bibliography: assets/refs.bib
+    footer: "Shaking Things Up -  RSS Avon 2023 - Zak Varty"
+    menu: true
+    slide-number: true
+    show-slide-number: all # (all / print / speaker)
+    self-contained: true # (set to true before publishing html to web)
+    chalkboard: false # (conflicts with self-contained)
+      #src: drawings.json
+      #theme: whiteboard
+      #read-only: true
+      #buttons: false
+    width: 1600 # default is 1050
+    height: 900 # default is 850
+    incremental: false
+---
+
+## Talk Structure
+
+1. Seismology 101 & Earthquake Data
+2. Building Blocks of Statistical Seismology 
+3. Current Work
+4. Future Directions
+
+. . . 
+
+**Aim:** Know where we're at, where we're going, how to join in.
+
+# 1: Seismology 101 & Earthquake Data 
+
+## What is an Earthquake? 
+
+```{r}
+countdown::countdown(1)
+```
+
+## What is an Earthquake?
+
+:::: {.columns}
+::: {.column width="45%"}
+Vibrations in the ground:
+
+- Jumping up and down
+- Jack-hammer
+- Traffic and Trains
+- Sea Storms
+
+:::
+::: {.column width="10%"}
+:::
+::: {.column width="45%"}
+<br>
+
+```{r}
+#| fig-align: center
+#| out-width: 90%
+#| fig-cap: "Image by wirestock on Freepik"
+knitr::include_graphics(path = "images/beautiful-scenery-sea-waves-crashing-rock-formations.jpg")
+```
+
+:::
+::::
+
+## Natural Seismicity 
+
+:::: {.columns}
+::: {.column width="50%"}
+<br>
+
+- Tectonic motion
+- Volcanic activity
+- Landslides
+
+:::
+::: {.column width="0%"}
+:::
+::: {.column width="50%"}
+<br>
+```{r}
+#| fig-align: center
+#| out-width: 90%
+#| fig-cap: Volcanic Eruptions in Iceland. Image source - [ABC](https://abcnews.go.com/International/iceland-warns-significant-likelihood-volcanic-eruption-earthquakes-shake/story?id=104840786).
+knitr::include_graphics(path = "images/ABC-icelandic-earthquakes.jpg")
+```
+:::
+::::
+
+##  Induced Seismicity
+
+:::: {.columns}
+::: {.column width="40%"}
+
+- Pop concerts
+- Nuclear tests
+- Mine blasts
+- Fluid injection / extraction
+- Fracking
+
+:::
+::: {.column width="10%"}
+:::
+::: {.column width="40%"}
+<br>
+```{r}
+#| fig-align: center
+#| out-width: 90%
+#| fig-cap: Lumen Field, Seattle. Image source - [NME](https://www.nme.com/news/music/taylor-swift-fans-cause-earthquake-level-activity-at-eras-tour-show-3474941)
+knitr::include_graphics(path = "images/taylor-swift-eras-seattle.jpg")
+```
+:::
+::::
+
+
+## Physics Recap 
+
+```{r}
+#| fig-align: center
+#| out-width: 90%
+knitr::include_graphics(path = "images/block-diagram.png")
+```
+
+## Cats on a Roof
+
+```{r}
+#| fig-align: center
+#| out-width: 50%
+knitr::include_graphics(path = "images/cats-on-a-roof.png")
+```
+
+
+## What is a Fault? 
+
+<br>
+
+```{r}
+#| fig-align: center
+#| out-width: 40%
+#| fig-cap: Image Source - [Wikimedia](https://commons.wikimedia.org/w/index.php?curid=130076176)
+knitr::include_graphics(path = "images/tectonic_plates.svg")
+
+# By M.Bitton - Own work based on: Hasterok, Derrick (8 June 2022). New maps of global geological provinces and tectonic plates. American Institute of Physics - Phys.org. Retrieved on 27 March 2023., CC BY-SA 3.0,
+```
+
+
+## Earthquakes as Fault Slip
+
+```{r}
+#| fig-align: center
+#| out-width: 70%
+knitr::include_graphics(path = "images/fault-sketch.png")
+```
+
+## Fault Slip {.smaller}
+
+:::: {.columns}
+::: {.column width="50%"}
+**How does it happen?**
+
+- Energy stored in rock under tension. 
+- Movement when driving force exceeds static friction.
+- Depends on a lot of factors:
+  - Material constants
+  - Slip area and distance
+  - Fault orientation
+  - ...
+  
+:::
+::: {.column width="50%"}
+
+** What do we care about?**
+
+- Total energy released
+- Power (W = J/s)
+- Aseismic creep
+
+:::
+::::
+
+## What provides the driving force? 
+
+```{r}
+#| fig-align: center
+#| out-width: 70%
+knitr::include_graphics(path = "images/porous-media.png")
+```
+
+## How do we measure earthquakes?
+
+```{r}
+#| fig-align: center
+#| out-width: 70%
+knitr::include_graphics(path = "images/p-waves-s-waves.png")
+```
+
+
+## How do we locate earthquakes? (1)
+
+```{r}
+#| fig-align: center
+#| out-width: 70%
+knitr::include_graphics(path = "images/locating-earthquakes-1.png")
+```
+
+## How do we locate earthquakes? (2)
+
+```{r}
+#| fig-align: center
+#| out-width: 70%
+knitr::include_graphics(path = "images/locating-earthquakes-2.png")
+```
+
+## How do we locate earthquakes? (3)
+
+```{r}
+#| fig-align: center
+#| out-width: 70%
+knitr::include_graphics(path = "images/locating-earthquakes-3.png")
+```
+
+## How do we locate earthquakes? (4)
+
+```{r}
+#| fig-align: center
+#| out-width: 70%
+knitr::include_graphics(path = "images/locating-earthquakes-4.png")
+```
+
+## It's a bit more complicated than that {.smaller}
+
+:::: {.columns}
+::: {.column width="45%"}
+```{r}
+#| fig-align: center
+#| out-width: 80%
+knitr::include_graphics(path = "images/seismograph-sketch.png")
+```
+:::
+::: {.column width="10%"}
+:::
+::: {.column width="45%"}
+- 3 Dimensions
+- Energy dissipation
+- Background noise
+- Material Inhomogeneity
+- Reflection, refraction and interference
+
+- Expert interpretation
+- DL: [Yoon et al (2023)](https://pubs.geoscienceworld.org/ssa/bssa/article-abstract/doi/10.1785/0120220229/624442/A-Detailed-View-of-the-2020-2023-Southwestern?redirectedFrom=PDF)
+:::
+::::
+
+## Earthquake Catalogues 
+
+- **x** Easting / Longitude
+- **y** Northing / Latitude
+- **z** Depth (often nominal)
+- **t** Time (YYYY-MM-DD HH:MM:SS)
+- **m** Magnitude
+
+## A note on Magnitudes 
+
+Magnitudes are measured on logarithmic scales and typically reported to 1 decimal place. 
+
+<br>
+
+\begin{align*}
+\text{Richter Scale} \rightarrow \text{Local Magnitude} &\sim \text{Amplitude}. \\
+&\text{Moment Magnitude} %\sim \text{Energy}.
+\end{align*}
+
+<br>
+
+$$ E \propto A^{1.5} \text{ so } 10\times \text{ or } 32\times \text{ increase.}$$
+
+## What is an Aftershock?
+
+```{r}
+countdown::countdown(1)
+```
+
+
+## What is an Aftershock?
+
+```{r}
+#| fig-align: center
+#| out-width: 70%
+knitr::include_graphics(path = "images/space-time-window.png")
+```
+
+# 2: Earthquake Modelling
+
+## Locations: Point Processes 
+
+:::: {.columns}
+::: {.column width="60%"}
+
+- Stochastic process $\mathcal{X} = \{X_1, \ldots, X_N\}$
+  - Values represent locations in time / space, number of values N is also random. 
+
+- Homogeneous Poisson Process on $A$:
+  - $N(A) \sim \text{Pois}(\lambda |A|)$
+  - $(X_i | N(A) = n) \overset{\text{i.i.d}}{\sim} \text{Unif}(A).$
+
+:::
+::: {.column width="40%"}
+<br>
+
+```{r}
+#| fig-align: center
+#| out-width: 70%
+#| fig-cap: Image source - [Wikimedia](https://commons.wikimedia.org/w/index.php?curid=35429)
+knitr::include_graphics(path = "images/earthquake-epicenters.png")
+```
+:::
+::::
+
+## Locations: Inhomogeneous Poisson Processes 
+
+Introduce an intensity function $\lambda(a): A \rightarrow \mathbb{R}^+_0$.
+
+$$ N(A) \sim \text{Pois}\left(\Lambda(A)\right) \quad \text{where} \quad \Lambda(A) = \int_A \lambda(a) \mathrm{d}a.$$
+
+Then 
+
+$$ X_i \overset{\text{i.i.d}}{\sim} f_X(a) =  \frac{\lambda(a)}{\Lambda(a)}.$$
+
+Physically motivated forms for $\lambda(a)$, e.g. [Bourne and Oates (2018)](https://academic.oup.com/gji/article/213/3/1693/4923051): 
+$$\Lambda \propto \exp(b_0 + b_1 z(a))$$.
+
+## Locations: Adding in Aftershocks
+
+[Hawkes Processes](https://www.tandfonline.com/doi/full/10.1080/14697688.2017.1403131?casa_token=mzP1d6Yev54AAAAA%3AYedSIxe7qeCuG7XdCDsTVfHNLsXUXp4aFfFD6iTH0wC1w3UylCIkAmHDr78wKzG3R5p2tyMsjdQD) add self excitation.
+
+\begin{equation*}
+\lambda(t; \mathcal{H}_t) = \mu + \sum_{i: t_i < t} \alpha \exp\{-\beta(t - t_i)\}.
+\end{equation*}
+
+## Locations: Adding in Aftershocks - a better way
+
+\begin{align*}
+\lambda(t) &= \mu + \sum_{i: t_i < t} \alpha \exp\{-\beta(t - t_i)\} \\
+&= \mu + \sum_{i: t_i < t} \frac{\alpha}{\beta} \beta \exp\{-\beta(t - t_i)\}  \\
+&= \mu + \sum_{i: t_i < t} \alpha^\prime \beta \exp\{-\beta(t - t_i)\} \\
+&= \mu + \sum_{i: t_i < t} \kappa(\cdot; \alpha^\prime) h(t - t_i; \beta)\}.
+\end{align*}
+
+## What about magnitudes? 
+
+::::{.columns}
+:::{.column width="50%"}
+Gutenberg-Richter Law:
+
+$$ \log_{10} N = a - bM.$$
+
+<br>
+
+For Statisticians: 
+
+$$M_i - m_c | M_i > m_c \sim \text{Exp}(\beta).$$
+:::
+:::{.column width="50%"}
+```{r}
+#| fig-align: center
+#| out-width: 70%
+#| fig-cap: Image source - [Wikimedia](https://commons.wikimedia.org/w/index.php?curid=134297164)
+knitr::include_graphics(path = "images/frequency-magnitude.png")
+```
+:::
+::::
+
+Biased estimation if rounding ignored. 
+
+## All Together Now: ETAS model
+
+$$ \lambda(t;\mathcal{H}_t, \theta) = \mu + \sum_{i:t_i < t} \kappa(m_i; K,a) h(t-t_i; c, p).$$
+<br>
+
+$$ \lambda(t;\mathcal{H}_t, \theta) = \mu + \sum_{i:t_i < t} K e^{a(m_i - m_c)} (p-1)c^{p-1} \left(1 + \frac{t-t_i}{c}\right)^{-p}.$$
+
+<br>
+
+$$ M_i \overset{\text{i.i.d}}{\sim} \text{Exp}(\beta). $$
+
+## ETAS Extensions 
+
+::::{.columns}
+:::{.column width="50%"}
+```{r}
+#| fig-align: center
+#| out-width: 70%
+#| fig-cap: Image source - [Wikimedia](https://commons.wikimedia.org/w/index.php?curid=38534275)
+knitr::include_graphics(path = "images/euclidean-voronoi-diagram.svg")
+```
+:::
+:::{.column width="50%"}
+- [Voroni Tesselation](https://www.sciencedirect.com/science/article/abs/pii/S0040195105004889) for $\mu$.
+- [Covariate-driven](https://academic.oup.com/gji/article/213/3/1693/4923051) background events.
+- [Flexible regression](https://link.springer.com/article/10.1007/s11222-022-10085-3) background (LGP).
+:::
+::::
+
+
+## ETAS Model Concerns 
+
+[Veen and Schoenberg (2012)](https://www.tandfonline.com/doi/abs/10.1198/016214508000000148) highlight several issues with the ETAS likelihood:
+
+<br>
+
+```{r}
+#| fig-align: center
+#| out-width: 70%
+knitr::include_graphics(path = "images/etas-likelihood.png")
+```
+
+
+## ETAS as a Branching Process
+
+```{r}
+#| fig-align: center
+#| out-width: 70%
+knitr::include_graphics(path = "images/etas-branching.png")
+```
+
+## Conditional Inference 
+
+Conditioning on $B$ provides very simple conditional distributions: 
+
+\begin{align*}
+ \mu &| K, a, c, p, B  - \text{Homogeneous PP}\\
+ K, a &| \mu, c, p, B  - \text{Poisson Regression} \\
+ c, p &| \mu, K, a, B  - \text{Power-law} \\
+ B &| \mu, K, a, c, p  - B_i \text{ multinomial}.
+\end{align*}
+
+# 3: Recent Developments
+
+## Unified Model and Dependence
+Following from branching process representation [Varty (2021)](https://www.research.lancs.ac.uk/portal/en/publications/statistical-modelling-of-induced-earthquakes(8034dddc-d282-4db2-affd-8fcf6b84b461).html) considers: 
+
+::::{.columns}
+:::{.column width="50%"}
+
+- GPD as unified parametrisation.
+- Dependence between magnitudes.
+
+:::
+:::{.column width="50%"}
+```{r}
+#| fig-align: center
+#| out-width: 70%
+knitr::include_graphics(path = "images/gpd-densities.pdf")
+```
+:::
+::::
+
+## Selecting M_c 
+
+[Varty et al (2021)]() and [Murphy et al (2023)](https://stat.paperswithcode.com/paper/automated-threshold-selection-and-associated) 
+
+```{r}
+#| fig-align: center
+#| out-width: 70%
+knitr::include_graphics(path = "images/murphy-paper.png")
+```
+
+
+## Errors in EV and PP models
+
+There are an awful lot of measurement errors being ignored here... (Yue 2023-2025) 
+
+```{r}
+#| fig-align: center
+#| out-width: 70%
+knitr::include_graphics(path = "images/linear-regression.png")
+```
+
+
+# 4: Future Directions
+
+## Wrapping Up
+
+1. Earthquakes are significant natural hazards but have received relatively little attention.
+
+2. State of the art models are reasonably accessible.
+
+3. Lots of contributions that could be made to extend these models by statistically minded folks. Any suggestions?
+
+
+
