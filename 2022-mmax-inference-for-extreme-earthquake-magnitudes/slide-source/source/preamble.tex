@@ -1,0 +1,63 @@
+\documentclass[10pt]{beamer}               % only frames
+%\documentclass[10pt, notes]{beamer}       % print frame + notes
+%\documentclass[10pt, notes=only]{beamer}   % only notes
+
+\usetheme[numbering=fraction]{metropolis}
+\usepackage{appendixnumberbeamer}
+
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+
+\usepackage{pgfplots}
+\usepgfplotslibrary{dateplot}
+
+\usepackage{xspace}
+\newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
+
+% Defining Imperial colors
+\definecolor{ImpDB}{HTML}{003E74}
+\definecolor{ImpLB}{HTML}{EB811B} % orange color EB811B replaced by Imperial light blue
+\definecolor{ImpNavy}{HTML}{002147}
+\definecolor{AlertRed}{HTML}{E22012}%{92140C}E22012
+\definecolor{ExampleGreen}{HTML}{036D19}
+
+\setbeamercolor{progress bar}{fg=ImpDB}
+\setbeamercolor{frametitle}{bg=ImpDB}
+\setbeamercolor{alerted text}{fg=AlertRed}
+%\setbeamercolor{block title alert}{fg=AlertRed, bg=AlertRed!40!white} 
+\setbeamercolor{block title example}{fg=ExampleGreen} %bg=ExampleGreen!40!white 
+\setbeamercolor{palette primary}{fg=white, bg=ImpDB} % Corrects standout slides
+
+\usepackage{verbatim}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\usepackage{bm}
+%=========================================================
+% Presentation specific fields below here
+%=========================================================
+
+\title{Inference for Extreme Earthquake Magnitudes}
+\subtitle{How to use and learn from small seismic events}
+\date{$M_{\text{max}}$ Workshop, June 2022.}
+\author{\textbf{Zak Varty}, Jonathan Tawn, Peter Atkinson \& Stijn Bierman}
+\institute{Lancaster University, Shell}
+
+\setbeamertemplate{frame footer}{\textbf{Z Varty}, J Tawn, P Atkinson \& S Bierman. Inference for Extreme Earthquake Magnitudes}
+
+% Left aligned title logo
+%\titlegraphic{
+%\hfill  % uncomment to right-align logo
+%\includegraphics[width = %3.5cm]{Imperial_1_Pantone_solid.eps}
+%}
+
+
+
+% Uncomment to add logo to each slide
+%\logo{
+%\includegraphics[width = 2cm]{Imperial_1_Pantone_solid.eps}
+%}
+
+\setbeamercolor{background canvas}{bg=white}
+
+
