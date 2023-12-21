@@ -1,0 +1,418 @@
+---
+title: "Birthdays: Probability, Statistics and Data Visualisation"
+author: "Zak Varty"
+date: ""
+format:
+  revealjs:
+    logo: lancaster_black1.png
+    footer: "Applicant Visit Day Talk - Zak Varty"
+    self-contained: true
+---
+
+## Question
+
+Talk to your neighbour: 
+
+<br>
+
+ - What is the probability that two or more people in this room share a birthday?
+
+<br>
+
+ - What assumptions are you making to arrive at your answer? 
+
+```{r, fig.align='center'}
+countdown::countdown(3)
+```
+
+## Typical Assumptions {.smaller}
+
+<br>
+
+::: {.incremental}
+- No twins, triplets, etc.  (birth dates are independent)
+- All days are equally probable. 
+- There are 365 days in the year.
+- Pr(Shared birthday) = 1 - Pr($n$ distinct birthdays). 
+:::
+
+. . . 
+
+<br>
+
+\begin{align} 
+\text{Pr}(n \text{  distinct birthdays}) 
+&= \frac{365}{365} \times \frac{364}{365} \times \dots \times \frac{365 - (n -1)}{365} \\ 
+& \\
+&= \prod_{i=0}^{n-1} \left\{\frac{365-i}{365}\right\}. 
+\end{align}
+
+
+## Plotting this Solution
+
+```{r}
+#| fig-align: center
+n <- 40
+N <- seq(1:n)
+pr <- rep(NA,n)
+for (i in N) {
+  pr[i] <- prod((365:(365 - (i - 1)))/365)
+}
+plot(
+  x = N,
+  y = pr,
+  type = 'h', 
+  ylab = 'Pr ( n distinct birthdays )',
+  xlab = 'Number of people, n.',
+  cex.lab = 1.5, 
+  cex.axis = 1.2, 
+  lwd = 3, 
+  col = "darkorange")
+```
+<!-- TODO: Investigate ShinyLive or export to separate document -->
+<!--
+## How about in this room?
+
+```{r}
+library(shiny)
+
+# Define server logic required to draw a histogram ----
+
+server <- function(input, output) {
+
+  # pmf of sharing birthdays ----
+  # with requested number of students highlighted and probability as main
+  # This expression that generates the pmf is wrapped in a call
+  # to renderPlot to indicate that:
+  #
+  # 1. It is "reactive" and therefore should be automatically
+  #    re-executed when inputs (input$students) change
+  # 2. Its output type is a plot
+  output$probPlot <- renderPlot({
+
+    x    <- 1:100 
+    pr <- rep(NA,100)
+    for(i in 1:100){
+      pr[i] <- prod((365:(365 - (i - 1)))/365)
+    }
+    col <- rep("grey20",100)
+    col[input$students] <- "darkorange"
+    
+    plot(x = x,
+         y = 1- pr,
+         type = 'h',
+         ylab = 'Pr( shared birthday )',
+         col = col,
+         main = paste(round(1- pr[input$students], digits = 8)),
+         lwd = 4)
+  }
+ )
+}
+```
+
+```{r}
+library(shiny)
+# Define UI for app that draws the pmf ----
+ui <- fluidPage(
+
+  # App title ----
+  titlePanel(""),
+
+  # Sidebar layout with input and output definitions ----
+  sidebarLayout(
+
+    # Sidebar panel for inputs ----
+    sidebarPanel(
+
+      # Input: Slider for the number of bins ----
+      sliderInput(inputId = "students",
+                  label = "Number of students:",
+                  min = 1,
+                  max = 70,
+                  value = 30)
+
+    ),
+
+    # Main panel for displaying outputs ----
+    mainPanel(
+
+      # Output: Histogram ----
+      plotOutput(outputId = "probPlot")
+
+    )
+  )
+)
+```
+
+
+```{r}
+shinyApp(
+  ui = ui,
+  server = server,
+  options = list(height = 500)
+)
+```
+-->
+
+# Testing Our Assumptions 
+
+## Are all days really equally likely?
+
+```{r, load-birth-data}
+#library('readxl')
+birthsbydate <- readxl::read_excel("birthsbydate1995to2016.xls", 
+    sheet = "Data", na = "z", skip = 4, n_max = 366)
+```
+
+
+```{r, split-date-into-day-and-month}
+library('tidyr')
+birthsbydate <- birthsbydate %>%
+  separate(Date, into = c("day", "month"), sep = "/")
+```
+
+```{r, create-births-matrix}
+birthsbyday <- birthsbydate %>%
+  dplyr::mutate(total = rowSums(.[,-(1:2)],na.rm = TRUE)) %>%
+  dplyr::select(day,month,total)
+
+births_mat <- spread(data = birthsbyday,value = total,key = day)
+```
+
+```{r, plot-births-matrix}
+#| fig-align: center
+
+birthsbyday <- birthsbyday %>% 
+  dplyr::mutate(sds = (total- mean(total,na.rm = TRUE))/sd(total,na.rm = TRUE)) %>%
+  dplyr::mutate(day = factor(day)) %>%
+  dplyr::mutate(month = factor(month)) %>% 
+  dplyr::mutate(month = factor(x = month, levels = rev(levels(month))))
+  
+
+ggplot2::ggplot(data = birthsbyday, 
+                ggplot2::aes(x= day, 
+                             y= month,
+                             fill= total)) + 
+  ggplot2::geom_tile() + 
+  ggplot2::ggtitle("UK births by day of year: Total Count 1995-2016") +
+  ggplot2::scale_fill_gradient(low="black", high="darkorange") + 
+  ggplot2::theme_minimal()
+```
+
+## Correcting for Feb 29
+
+```{r correcting for Feb29, fig.align="center"}
+occurances <- rep(22,366)
+occurances[31+29] <- 6 #number of leap years (1996,2000,...,2016).
+birthsbyday <- birthsbyday %>%
+  dplyr::mutate(occurs =  occurances) %>%
+  dplyr::mutate(rel_count = total/occurs)
+
+
+ggplot2::ggplot(data = birthsbyday, 
+                ggplot2::aes(x= day, 
+                             y= month,
+                             fill= rel_count)) + 
+  ggplot2::geom_tile() + 
+  ggplot2::ggtitle("UK births by day of year: Adjusted Mean Count 1995-2016") +
+  ggplot2::scale_fill_gradient(low="black", high="darkorange") + 
+  ggplot2::labs(fill = "Mean \n Count") + 
+  ggplot2::theme_minimal()
+```
+
+## A different view of the same data
+
+```{r A different view, fig.align="center"}
+
+birthsbydate <- dplyr::mutate(.data = birthsbydate, doy = 1:366)
+birthsbyday <- dplyr::mutate(.data = birthsbyday, doy = 1:366)
+
+ggplot2::ggplot(data = birthsbyday) +
+  ggplot2::geom_line(mapping = ggplot2::aes(x = doy,y = rel_count), col = "grey20", lwd = 1) + 
+  ggplot2::ylab("adjusted mean birth count") + 
+  ggplot2::xlab("day of year") + 
+  ggplot2::theme_minimal()
+```
+
+## Handling holidays {.smaller}
+
+- Only emergency treatments on Christmas, Boxing day and New Years Day. 
+- Treat these days separately. (Skip over hypothesis tests here) 
+
+<br>
+
+. . .
+
+$$\widehat p = \frac{\text{relative count}}{\text{total relative count}}$$
+<br>
+
+. . . 
+
+$$\widehat{p}_{01/01} = 0.00237 \approx \frac{1}{421}, \quad \widehat{p}_{25/12} = 0.00214 \approx \frac{1}{467}, \quad \widehat{p}_{26/12} = 0.00204 \approx \frac{1}{490}.$$
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=TRUE}
+nyd <- which(birthsbyday$month == '01'& birthsbyday$day =='01')
+boxday <- which(birthsbyday$month == '12'& birthsbyday$day =='26')
+xmas <- which(birthsbyday$month == '12'& birthsbyday$day =='25')
+leap <- which(birthsbyday$month == '02'& birthsbyday$day =='29')
+phat <- function(dayofyear){
+  birthsbyday$rel_count[dayofyear] / sum(birthsbyday$rel_count)
+} 
+phat(c( xmas, boxday, nyd))
+1/phat(c( xmas, boxday, nyd))
+```
+
+## What about the non-holidays?
+```{r warning=FALSE, fig.align="center"}
+non_hols_byday <- birthsbyday
+nyd <- which(birthsbyday$month == '01'& birthsbyday$day =='01')
+boxday <- which(birthsbyday$month == '12'& birthsbyday$day =='26')
+xmas <- which(birthsbyday$month == '12'& birthsbyday$day =='25')
+leap <- which(birthsbyday$month == '02'& birthsbyday$day =='29')
+hols <- c(nyd,boxday,xmas, leap)
+non_hols_byday[hols,c(3,4,6)]<- NA
+
+ggplot2::ggplot(data=non_hols_byday) + 
+  ggplot2::geom_line(mapping = ggplot2::aes(x = doy, y = rel_count)) +
+  ggplot2::xlab("day of year") + 
+  ggplot2::ylab("mean birth count") + 
+  ggplot2::theme_minimal()
+```
+## But we have all of this information!
+
+```{r message=FALSE, warning=FALSE, fig.align="center",}
+non_hols <- birthsbydate 
+nyd <- which(non_hols$month == '01'& non_hols$day =='01')
+boxday <- which(non_hols$month == '12'& non_hols$day =='26')
+xmas <- which(non_hols$month == '12'& non_hols$day =='25')
+leap <- which(non_hols$month == '02'& non_hols$day =='29')
+hols <- c(nyd,boxday,xmas, leap)
+non_hols[hols,3:25] <- NA
+
+tidynon_hols <- gather(data = non_hols, key = year,value = births, `2016`:`1995`)
+ggplot2::ggplot(data = tidynon_hols) +
+  ggplot2::geom_point(mapping = ggplot2::aes(x = doy,y = births, col = year)) + 
+  ggplot2::ylab("birth count") + 
+  ggplot2::xlab("day of year") + 
+  ggplot2::scale_color_manual(values = colorRampPalette(c("black", "darkorange"))(22)) +
+  ggplot2::scale_fill_manual(values = colorRampPalette(c("black", "darkorange"))(22)) +
+  ggplot2::theme_minimal()
+```
+
+## What are we testing?
+
+<br>
+<br>
+
+$$ H_0: \text{all non-holidays have the same mean birth count.}$$
+
+$$vs.$$
+
+$$H_1: \text{At least one day has a different mean.}$$
+
+## Bootstrap confidence interval - idea
+
+<br>
+
+::: {.incremental}
+- Under $H_0$ and the observations being i.i.d., the observed counts could have happened on any day
+- We can build another day that we have not observed based on our data
+- Build lots of these days and calculate the mean of each one
+- Use the quantiles of these e.g. $(\bar x_{0.025}, \bar x_{0.975})$ to construct a confidence interval.
+:::
+
+## Bootstrap confidence interval - procedure
+
+::: {.incremental}
+- Sample 22 non holiday birth counts at random, with replacement.
+- Calculate their mean.
+- Add this to a vector of means. 
+- Repeat until we have 10,000 means. 
+- Calculate the desired quantiles of the mean vector. 
+- Compare to observations. 
+:::
+
+## Bootstrap confidence interval - code
+
+```{r echo=TRUE}
+# 1: set up data & storage
+boot_data <- as.vector(as.matrix(non_hols[,3:24]))
+boot_sample <- rep(NA,22)
+
+boot_size <- 1e5
+boot_means  <- rep(NA,boot_size) 
+
+# 2: make fake data sets where day does not matter
+for (i in 1:boot_size) {
+  boot_sample <- sample(boot_data, size = 22, replace = TRUE)
+  boot_means[i] <- mean(boot_sample,na.rm = TRUE)
+}
+
+# 3: find "typical" range if day does not influence count
+boot_CI <- quantile(boot_means, probs = c(0.025,0.975))
+boot_CI
+```
+
+## Bootstrap confidence interval - results
+
+```{r warning=FALSE, fig.align="center"}
+non_hols_byday <- birthsbyday
+
+# find which entries correspond to holidays
+nyd    <- which(birthsbyday$month == '01' & birthsbyday$day == '01')
+boxday <- which(birthsbyday$month == '12' & birthsbyday$day == '26')
+xmas   <- which(birthsbyday$month == '12' & birthsbyday$day == '25')
+leap   <- which(birthsbyday$month == '02' & birthsbyday$day == '29')
+
+# remove values for holidays
+hols   <- c(nyd,boxday,xmas, leap)
+non_hols_byday[hols, c(3,4,6)] <- NA
+
+# plot mean birth count
+ggplot2::ggplot(data = non_hols_byday) + 
+  ggplot2::geom_line(mapping = ggplot2::aes(x = doy, y = rel_count)) +
+  ggplot2::xlab("day of year") + 
+  ggplot2::ylab("mean birth count") + 
+  ggplot2::geom_hline(yintercept = boot_CI, linetype = 'dashed', color = 'darkorange') + 
+  ggplot2::theme_minimal()
+```
+
+## Other questions
+
+We could take this analysis much further:
+
+<br>
+
+::: {.incremental}
+- Is there dependence on the previous count(s)?
+- Is there an effect from the day of week?
+- Is there an trend over time?
+:::
+
+<br>
+
+If you want to learn more: [https://pudding.cool/2018/04/birthday-paradox/](https://pudding.cool/2018/04/birthday-paradox/)
+
+
+## Takeaways
+
+<br>
+<br>
+
+::: {.incremental}
+- Statistics is about understanding the assumptions. 
+- The more assumptions you make the more you can conclude.
+- Display choices impact what is seen and what is hidden. 
+- A statistician's work is never done! 
+:::
+
+## Any quick questions? I'll be around at coffee for longer ones!
+
+
+```{r}
+#| out-width: 60%
+#| fig-align: center
+knitr::include_graphics("balloon.png")
+```
+:::
+::::
