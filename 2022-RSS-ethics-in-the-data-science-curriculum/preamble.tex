@@ -1,0 +1,82 @@
+%==============================================
+%  DOCUMENT COMPILATION SETTINGS
+%==============================================
+\documentclass[12pt,aspectratio=169]{beamer}  % only frames
+%\documentclass[10pt, notes]{beamer}          % print frame + notes
+%\documentclass[10pt, notes=only]{beamer}     % only notes
+
+\graphicspath{{images/}}    % where to find images
+
+%==============================================
+%  THEME THINGS - do not alter
+%==============================================
+\usetheme[numbering=fraction]{metropolis}
+\usepackage{appendixnumberbeamer}
+
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+
+\usepackage{pgfplots}
+\usepgfplotslibrary{dateplot}
+
+\usepackage{xspace}
+\newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
+
+% Defining Imperial colors
+\definecolor{ImpDB}{HTML}{003E74}
+\definecolor{ImpLB}{HTML}{EB811B} % orange color EB811B replaced by Imperial light blue
+\definecolor{ImpNavy}{HTML}{002147}
+\definecolor{AlertRed}{HTML}{E22012}%{92140C}E22012
+\definecolor{ExampleGreen}{HTML}{036D19}
+
+\setbeamercolor{progress bar}{fg=ImpDB}
+\setbeamercolor{frametitle}{bg=ImpDB}
+\setbeamercolor{alerted text}{fg=AlertRed}
+%\setbeamercolor{block title alert}{fg=AlertRed, bg=AlertRed!40!white} 
+\setbeamercolor{block title example}{fg=ExampleGreen} %bg=ExampleGreen!40!white 
+\setbeamercolor{palette primary}{fg=white, bg=ImpDB} % Corrects standout slides
+
+\setbeamercolor{background canvas}{bg=white}
+
+%==============================================
+%  PACKAGES - add as needed
+%==============================================
+\usepackage{verbatim}
+\usepackage{bm}
+\usepackage{pifont} % http://ctan.org/pkg/pifont  -- for ticks and crosses
+
+
+
+%==============================================
+%  USER DEFINED COMMANDS - add as needed
+%==============================================
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+
+%==============================================
+%  PRESENTATION SPECIFICS - add/edit as needed
+%==============================================
+
+\title{Incorporating Ethics into \\ the Data Science Curriculum}
+\subtitle{Royal Statistical Society Conference, Aberdeen 2022}
+\date{}
+\author{Dr Zak Varty \\ Imperial College London}
+\institute{\small{\textbf{Twitter:} \texttt{@zakvarty} \quad \textbf{Email:} \texttt{z.varty@imperial.ac.uk}}}
+
+\setbeamertemplate{frame footer}{Zak Varty \hspace{10em} \textit{RSS Conf 2022:} Ethics in the Data Science Curriculum. }
+
+% Left aligned title logo
+\titlegraphic{
+\hfill  % uncomment to right-align logo
+\includegraphics[width = 3.5cm]{source/Imperial_1_Pantone_solid.eps}
+}
+
+% Uncomment to add logo to bottom-right of each slide
+%\logo{
+%   \includegraphics[width=2cm]{source/ethics-1-logo}}}
+%}
+
+
+
+
