@@ -1,0 +1,556 @@
+---
+title: "Statistical Hazard Modelling"
+subtitle: "A very brief introduction"
+author: Zak Varty
+date: ""
+editor: source
+format:
+  revealjs:
+    theme: assets/zv-slides-theme.scss
+    logo: assets/zv-logo-192x192.png
+    bibliography: assets/refs.bib
+    footer: "Statistical Hazard Modelling - A Very Brief Introduction - Zak Varty"
+    menu: true
+    slide-number: true
+    show-slide-number: all # (all / print / speaker)
+    self-contained: true # (set to true before publishing html to web)
+    chalkboard: false # (conflicts with self-contained)
+      #src: drawings.json
+      #theme: whiteboard
+      #read-only: true
+      #buttons: false
+    width: 1600 # default is 1050
+    height: 900 # default is 850
+    incremental: false
+---
+
+## Why do we care about hazard modelling? 
+
+<br>
+
+::::{.columns}
+:::{.column width="30%"}
+:::{.fragment}
+**Climate** 
+
+  - Heat-waves and cold-snaps,
+  - Drought and floods,
+  - Earthquakes and wildfires.
+:::
+:::
+:::{.column width="5%"}
+:::
+:::{.column width="30%"}
+:::{.fragment}
+**Finance**
+
+  - Market Crashes, 
+  - Portfolio Optimisation,
+  - Insurance and Reinsurance.
+:::
+:::
+:::{.column width="5%"}
+:::
+:::{.column width="30%"}
+:::{.fragment}
+**Industry**
+
+  - Quality assurance,
+  - Reliability modelling,
+  - Asset protection.
+:::
+:::
+::::
+
+## Risk vs Hazard 
+
+::::{.columns}
+:::{.column width="50%"}
+<br>
+
+**Hazard $\approx$ probability:** _the chance of an event at least as severe as some value happening within in a given space-time window._ 
+
+<br>
+
+$$\Pr(X > x) = 1 - F_X(x).$$
+<br>
+
+**Risk $\approx$ cost:** _the potential economic, social and environmental consequences of perilous events that may occur in a specified period of time or space._
+
+$$ \text{VaR}_\alpha (X) = F_X^{-1}(\alpha) \quad or \quad \text{ES}_\alpha(X) = \mathbb{E}[X | X < \text{VaR}_\alpha(X)].$$
+
+:::
+:::{.column width="50%"}
+
+:::{.fragment}
+```{r}
+#| layout-ncol: 2
+knitr::include_graphics("images/fenland.png")
+knitr::include_graphics("images/city.png")
+```
+
+
+- Subjectivity in cost function 
+- Convolution of hazard and geographic / demographic information
+:::
+
+:::
+::::
+
+## We can focus on modelling large values
+
+Depending on the peril we are considering, the definition of a "bad" outcome differs:
+
+- the largest negative returns in finance,
+- the largest positive amounts of rain,
+- the smallest failure stress/time in engineering.
+
+. . . 
+
+<br>
+
+Without loss of generality, we can focus on modelling large positive values, by transforming our data and results as appropriate. 
+
+$$g(X_i) \quad \text{e.g.} \quad -X \quad \text{or} \quad X^{-1}.$$
+
+
+## What is wrong with OLS? 
+
+::::{.columns}
+:::{.column width="50%"}
+<br> <br>
+
+An issue with risk / hazard modelling is that we are by definition interested in the rare events, which make up only a very small proportion of our data. 
+
+- Standard modelling techniques describe the expected outcome.
+- Each point is weighted equally and typical values are most common and so dominate measures of model fit.
+:::
+:::{.column width="50%"}
+<br> <br>
+```{r}
+set.seed(1234)
+x <- rgamma(n = 50, shape = 3, scale =  2)
+z <- rbinom(n = 50, size = 15, prob = 0.7)
+y <- rnorm(n = 50, mean = 3 + 17*x + z, sd = 4 + 2*z)
+x[which.max(x)] <- 6
+
+par(bg=NA)
+plot(x, y, 
+pch = 16,
+col = rgb(0,0,0,0.35),
+bty = "n", 
+cex.axis = 1.5,
+cex.lab = 1.5)
+
+mod <- lm(y ~ x)
+abline(coefficients(mod), col = "darkorange", lwd = 3) 
+points(x, y,col = rgb(0,0,0,0.35))
+```
+:::
+::::
+
+## Robust Regression and Quantile Regression 
+
+::::{.columns}
+:::{.column width="50%"}
+*Robust regression:*
+
+  - Models the conditional median $Y_{0.5} \ |\  X$. 
+  - Reduces sensitivity to "outliers" 
+  - The opposite of what we want to do! 
+   
+Generalises to *quantile regression:* 
+
+  - Model for conditional quantile $Y_p \ | \ X$
+  - Okay in sample but sample not always large enough.
+:::
+:::{.column width="50%"}
+<br> <br>
+```{r}
+par(bg=NA)
+
+plot(x, y, 
+pch = 16, 
+size = 2,
+col = rgb(0,0,0,0.35), 
+bty = "n",
+cex.axis = 1.5,
+cex.lab = 1.5)
+
+mod_90 <- quantreg::rq(y ~ x, tau = .9)
+mod_75 <- quantreg::rq(y ~ x, tau = .75)
+mod_50 <- quantreg::rq(y ~ x, tau = .5)
+
+abline(coefficients(mod_90), col = zvplot::zv_fuchia, lwd = 3) 
+abline(coefficients(mod_75), col = zvplot::zv_teal, lwd = 3) 
+abline(coefficients(mod_50), col = zvplot::zv_navy, lwd = 3) 
+
+points(x, y, col = rgb(0,0,0,0.35))
+legend("topleft", 
+  legend = c("0.9","0.75", "0.5"), 
+  col = c(zvplot::zv_fuchia, zvplot::zv_teal, zvplot::zv_navy),
+  lwd = 3,
+  bty = "n",
+  title = "p")
+```
+:::
+::::
+
+## Extreme Value Theory 
+
+::::{.columns}
+:::{.column width="50%"}
+What if we need to do beyond the historical record? 
+
+- e.g. estimate a _1 in 1000-year flood_ from 50 years of data.
+
+- Extreme Value Theory allows principled extrapolation beyond the range of the observed data. 
+  - Return values and return periods.
+
+- Focuses on the most extreme observations. 
+  - bulk vs tail of distribution.
+    
+:::
+:::{.column width="10%"}
+:::
+:::{.column width="40%"}
+:::{.fragment}
+<br> 
+
+If we care about
+
+<br>
+
+$$M_n = \max \{X_1, \ldots, X_n\}$$
+
+<br>
+
+How can we model
+
+<br>
+
+\begin{align*}
+F_{M_n}(x) &= \Pr(X_1 \leq x,\ \ldots, \ X_n \leq x)  \\
+           &= \Pr(X \leq x) ^n \\
+           &= F_X(x)^n?
+\end{align*}
+:::
+:::
+::::
+
+## Extremal Types Theorem 
+
+
+Analogue of CLT for Sample Maxima. Let's revisit the CLT:
+
+<br>
+
+> Suppose $X_1, X_2, X_3, \ldots,$ is a sequence of i.i.d. random variables with $\mathbb{E}[X_i] = \mu$ and $\text{Var}[X_i] = \sigma^2 < \infty$. 
+>
+> As $n \rightarrow \infty$, the random variables $\frac{\sqrt{n} (\bar{X}_n - \mu)}{\sigma}$ converge in distribution to a standard normal distribution. 
+>
+> <br>
+>
+> $$ \frac{\sqrt{n} (\bar{X}_n - \mu)}{\sigma} \overset{d}{\longrightarrow} \mathcal{N}(0,1).$$
+
+<br>
+
+. . . 
+
+Rephrasing this as the partial sums rather than partial means: 
+
+$$\frac{S_n}{\sigma\sqrt{n}} - \frac{\mu}{\sigma / \sqrt{n}} \overset{d}{\longrightarrow} \mathcal{N}(0,1).$$
+
+## Extremal Types Theorem 
+
+Analogue of CLT for Sample Maxima. Let's revisit the CLT:
+
+<br>
+
+Under weak conditions on $F_X$ and where appropriate sequences of constants $\{a_n\}$ and $\{b_n\}$ exist: 
+
+$$a_n S_n - b_n \overset{d}{\longrightarrow} \mathcal{N}(0,1).$$
+
+. . . 
+
+<br>
+
+- Does not depend on $F_X(x)$, subject to weak conditions (mean exists and finite variance).
+- Scaling and shifting to avoid degeneracy.
+- Motivates Gaussian errors as sum of many non-Gaussian errors.
+- Generalises to non-iid sequences. 
+
+
+## Extremal Types Theorem 
+
+<br>
+
+>If suitable sequences of normalising constants exist, then as $n \rightarrow \infty$: 
+>
+>\begin{equation} \label{eqn:lit_extremes_normalising}
+>	\Pr\left(\frac{M_n - b_n}{a_n} \leq x \right) \rightarrow G(x),
+>\end{equation}
+>
+>where $G$ is distribution function of a Fréchet, Gumbel or negative Weibull random variable. 
+
+<br>
+
+This links to the concept of _Maximal Domain of Attraction_: if we know $F_X(x)$ then we can identify $G(x)$.
+
+. . . 
+
+<br>
+
+But we don't know $F$!
+
+## Unified Extremal Types Theorem
+
+These distributional forms are united in a single parameterisation by the Unified Extremal Types Theorem.  
+
+>The resulting generalised extreme value (GEV) family of distribution functions has the form 
+>
+>\begin{equation} \label{eqn:lit_extremes_GEV}
+>	G(x) = \exp\left\{ -\left[ 1 + \xi \frac{x - \mu}{\sigma} \right]_{+}^{-1/\xi}\right\},
+>\end{equation}
+>
+>where $x_+ = \max(x,0)$, $\sigma \in \mathbb{R}^+$ and $\mu , \xi \in \mathbb{R}$. The parameters $\mu, \sigma$ and $\xi$ have respective interpretations as location, scale and shape parameters. 
+
+-  $\xi > 0$ correspond to a Fr\'echet distribution and a heavy upper tail.
+-  $\xi = 0$ the GEV is equivalent to a Gumbel distribution and has an exponential upper tail.
+- $\xi < 0$ correspond to a negative Weibull distribution, which is light tailed and has a finite upper end point.
+
+## GEV in Action 
+
+::::{.columns}
+:::{.column width="35%"}
+- CLT and UETT are asymptotic results, we use them as approximations for finite $n$.
+
+- Split the data into $m$ blocks of length $k$ and model the $M_k$.
+
+- _How to pick the block size?_ Trade-off between bias and variance. 
+
+- Annual blocks often uses as a pragmatic choice to handle seasonal trends. 
+:::
+:::{.column width="5%"}
+:::
+:::{.column width="60%"}
+
+<br>
+
+<br>
+
+```{r}
+par(bg=NA, mar = c(5.1,5.1,2,2))
+set.seed(1234)
+x <- rnorm(3650)
+maxima <- c()
+for (i in 1:10) {
+  lower <- (i - 1) * 365 + 1
+  upper <- (i * 365)
+  maxima <- c(maxima, which.max(x[lower:upper]) + lower - 1)
+}
+block_max_colour <- ifelse(seq_along(x) %in% maxima, "darkorange", "grey70")
+pot_colour <- ifelse(x>2, "darkorange", "grey70")
+
+plot(
+x = seq_along(x),
+y = x, 
+pch = 16, 
+col = block_max_colour, 
+cex.axis = 1.5,
+cex.lab = 1.5,
+xlab = "index, i", 
+ylab = expression(X[i]), 
+bty = "n", 
+xlim = c(-200,4000))
+abline(v = (1:9) * 365, lwd = 2)
+```
+:::
+::::
+
+## Peaks Over Threshold Modelling
+
+::::{.columns}
+:::{.column width="35%"}
+<br>
+
+- Alternative definition of "extreme": any $X_i > u$. 
+- Generalised Pareto limit distribution for $X_i - u \ | \ X_i > u$.
+- In applications need to pick threshold $u$.
+- To undo conditioning, we also model $\lambda_u = \Pr(X_i > u)$.
+:::
+:::{.column width="5%"}
+:::
+:::{.column width="60%"}
+<br><br>
+```{r}
+par(bg=NA, mar = c(5.1,5.1,2,2))
+
+plot(
+x = seq_along(x),
+y = x, 
+pch = 16, 
+col = pot_colour, 
+cex.axis = 1.5,
+cex.lab = 1.5,
+xlab = "index, i", 
+ylab = expression(X[i]), 
+bty = "n", 
+xlim = c(-200,4000))
+abline(h = 2, lwd = 2)
+```
+:::
+::::
+
+## Adding in Non-stationarity 
+
+- IID assumption is overly restrictive
+- Asymptotic theory holds for stationary sequences, long as dependence decays "fast enough".
+- We can consider GLM style modelling using covariates. 
+
+
+<br>
+
+$$X_i - u | X_i > u, z_i \sim \text{GPD}(\sigma(z_i),\  \xi(z_i)).$$
+<br>
+
+$$ \lambda(z_i) = \Pr(X_i > u | z_i) = \frac{\exp\{\beta_0 + \beta_1 z_i\}}{1 + \exp\{\beta_0 + \beta_1 z_i\}}.$$
+
+## Point Processes
+
+::::{.columns}
+:::{.column width="50%"}
+EVT gives us a model for the size of rare events, to get risk maps or forecasts we also care about how they occur over time/space.
+
+<br>
+
+_Point processes_ are a stochastic process $\{X_1, \ldots ,X_N\}$ where RVs represent locations of event in time or space and the number of these is random. 
+
+<br>
+
+_Poisson process_ is simplest version, Poisson($\lambda$) number events located independently and uniformly at random.
+
+:::
+:::{.column width="10%"}
+:::
+:::{.column width="40%"}
+<br><br>
+```{r}
+source("src/plot_point_pattern_square.R")
+source("src/sim_hpp_unit_square.R")
+
+hpp_1 <- sim_hpp_unit_square(lambda = 20, seed = 1236)
+plot_point_pattern_square(hpp_1)
+```
+:::
+::::
+
+## Homogeneous Poisson Processes 
+
+- Not a useful model, too simple to be realistic.
+
+- Central case from which to define clustered or regular occurrences.
+
+```{r load-point-patterns}
+cells_path <- "./data/cells.csv"
+pines_path <- "./data/black_pines.csv"
+redwoods_path <- "./data/redwood_seedlings.csv"
+
+cells <- readr::read_csv(cells_path, show_col_types = FALSE)
+pines <- readr::read_csv(pines_path, show_col_types = FALSE)
+redwoods <- readr::read_csv(redwoods_path, show_col_types = FALSE)
+```
+
+```{r plot-example-point-patterns}
+#| echo: false
+#| layout-ncol: 3
+#| label: fig-cells-pines-redwoods
+#| fig-cap: 
+#|   - Locations of 42 cell centres in a unit square .
+#|   - Locations of 65 Japanese black pine saplings in a square of side 5.7 m . 
+#|   - Locations of 62 redwood seedlings in a square of side 23 m.
+
+plot_point_pattern_square(cells)
+plot_point_pattern_square(pines)
+plot_point_pattern_square(redwoods)
+```
+
+
+## Testing for CSR 
+
+```{r simulate-point-patterns}
+#| echo: false
+hpp_1 <- sim_hpp_unit_square(lambda = 20, seed = 1236)
+hpp_2 <- sim_hpp_unit_square(lambda = 20, seed = 1235)
+hpp_3 <- sim_hpp_unit_square(lambda = 20, seed = 12345)
+```
+
+<br>
+
+Some simulated point patterns - which is random, clustered or repulsive?
+
+<br>
+
+```{r plot-example-point-patterns}
+#| echo: false
+#| layout-ncol: 3
+#| label: fig-sim-point-patterns
+#| subfig-cap: 
+#|   - a
+#|   - b 
+#|   - c.
+plot_point_pattern_square(hpp_1)
+plot_point_pattern_square(hpp_2)
+plot_point_pattern_square(hpp_3)
+```
+
+. . . 
+
+Humans are rubbish at this. How can we formally test instead?
+
+## Relaxing the assumptions 
+
+_Inhomogeneous Poisson Process:_ event count still Poisson, events locations still independent but rate of events allowed to vary over time/space: 
+
+$$ \lambda(t) = \lim_{\delta \rightarrow 0 } \frac{N(t, t + \delta)}{\delta}.$$
+
+. . . 
+
+The expected number of events in a region $A$ is given by the integral of this intensity function. 
+
+$$ \Lambda(A) = \int_A \lambda(t) \mathrm{d}t \quad  \text{e.g.} \quad \int_{t_{0}}^{t_{1}} \exp(a + bt) \mathrm{d}t.$$
+
+. . .
+
+Interested in describing the number, location and any additional information about events – potentially using covariates to do so.
+
+. . . 
+
+**Further relaxations:** renewal processes, Poisson cluster processes, self-exciting processes.
+
+## All together now 
+
+_Peaks Over Threshold_
+
+  - conditional model for the size perilous events,
+  - makes efficient use of the available data.
+
+_Point Processes_
+
+  - joint description of how many perils and where / when we expect to see them. 
+
+Combining these we can undo the conditioning to assess hazard and risk.
+
+*hazard*: number, location and magnitude of peril.
+*risk*: convolution of hazard with context and opinion.
+
+. . . 
+
+**Challenge:** What if we do not have a good guess at GLM form? Mix with flexible regression techniques.
+
+## Build Information {.smaller}
+
+
+```{r}
+pander::pander(sessionInfo())
+```
