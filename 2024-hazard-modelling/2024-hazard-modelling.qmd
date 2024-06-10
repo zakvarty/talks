@@ -171,7 +171,6 @@ par(bg=NA)
 
 plot(x, y, 
 pch = 16, 
-size = 2,
 col = rgb(0,0,0,0.35), 
 bty = "n",
 cex.axis = 1.5,
@@ -547,6 +546,18 @@ Combining these we can undo the conditioning to assess hazard and risk.
 . . . 
 
 **Challenge:** What if we do not have a good guess at GLM form? Mix with flexible regression techniques.
+
+## Starting Points
+
+### Extreme Value Modelling
+- [Course Notes](https://extremes-notes.zakvarty.com)
+- [Coles (2001)](https://link.springer.com/book/10.1007/978-1-4471-3675-0) Introduction to statistical modelling of extreme values. 
+- [`{ismev}`](https://cran.r-project.org/web/packages/ismev/ismev.pdf) R package.
+
+### Point Process Modelling
+- [Course Notes](https://m1r.zakvarty.com)
+- [Diggle (2014)](https://www.routledge.com/Statistical-Analysis-of-Spatial-and-Spatio-Temporal-Point-Patterns/Diggle/p/book/9781032477473)
+- [{sp}](https://cran.r-project.org/web/packages/sp/vignettes/intro_sp.pdf) and [{spatstat}](https://cran.r-project.org/web/packages/spatstat/vignettes/getstart.pdf) R packages.
 
 ## Build Information {.smaller}
 
