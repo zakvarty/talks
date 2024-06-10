@@ -556,8 +556,8 @@ Combining these we can undo the conditioning to assess hazard and risk.
 
 ### Point Process Modelling
 - [Course Notes](https://m1r.zakvarty.com)
-- [Diggle (2014)](https://www.routledge.com/Statistical-Analysis-of-Spatial-and-Spatio-Temporal-Point-Patterns/Diggle/p/book/9781032477473)
-- [{sp}](https://cran.r-project.org/web/packages/sp/vignettes/intro_sp.pdf) and [{spatstat}](https://cran.r-project.org/web/packages/spatstat/vignettes/getstart.pdf) R packages.
+- [Diggle (2014)](https://www.routledge.com/Statistical-Analysis-of-Spatial-and-Spatio-Temporal-Point-Patterns/Diggle/p/book/9781032477473) Statistical analysis of spatial and spatio-temporal point patterns.
+- [`{sp}`](https://cran.r-project.org/web/packages/sp/vignettes/intro_sp.pdf) and [`{spatstat}`](https://cran.r-project.org/web/packages/spatstat/vignettes/getstart.pdf) R packages.
 
 ## Build Information {.smaller}
 
