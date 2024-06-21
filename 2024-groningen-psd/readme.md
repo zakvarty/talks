@@ -1,4 +1,4 @@
-# Nonstationary Hazard Modelling - Data Challenge 
+# Nonstationary Hazard Modelling - Data Challenge  
 
 ## Description 
 
