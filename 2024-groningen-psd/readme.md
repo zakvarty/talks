@@ -1,4 +1,4 @@
-# RSS 2023 - Go Figure! 
+# Nonstationary Hazard Modelling - Data Challenge 
 
 ## Description 
 
