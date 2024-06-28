@@ -4,7 +4,7 @@ author: "Zak Varty"
 date: ""
 format:
   revealjs:
-    logo: lancaster_black1.png
+    logo: zv-logo-192x192.png
     footer: "Applicant Visit Day Talk - Zak Varty"
     self-contained: true
 ---
