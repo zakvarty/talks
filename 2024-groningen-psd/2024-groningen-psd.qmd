@@ -1,0 +1,223 @@
+---
+title: "Nonstationary Hazard Modelling"
+subtitle: "Data Challenge"
+author: Zak Varty
+date: ""
+editor: source
+format:
+  revealjs:
+    theme: assets/zv-slides-theme.scss
+    logo: assets/zv-logo-192x192.png
+    bibliography: assets/refs.bib
+    footer: "Nonstationary Hazard Modelling - Data Challenge - Zak Varty"
+    menu: true
+    slide-number: true
+    show-slide-number: all # (all / print / speaker)
+    self-contained: true # (set to true before publishing html to web)
+    chalkboard: false # (conflicts with self-contained)
+      #src: drawings.json
+      #theme: whiteboard
+      #read-only: true
+      #buttons: false
+    width: 1600 # default is 1050
+    height: 900 # default is 850
+    incremental: false
+---
+
+## Data Challenge
+
+
+### Purpose
+
+:::{.fragment}
+- Put what you have been learning into action 
+- Work with new people (3 groups)
+:::
+
+### Task 
+
+:::{.fragment}
+- Explore a dataset relating to an environmental hazard (eathquakes)
+- Work towards answering some meaningful questions.
+:::
+ 
+
+### Deliverable 
+
+:::{.fragment}
+- 5-10 minute presentation (email to `z.varty@imperial.ac.uk` before 14:30.)
+:::
+
+## About the Data 
+
+::::{.columns}
+:::{.column width="40%"}
+- Earthquakes in the NE of Netherlands
+- Caused by extraction of Natural Gas
+- Small but close to the surface
+:::
+:::{.column width="10%"}
+:::
+:::{.column width="50%"}
+![](images/dutch-house.png)
+:::
+::::
+
+## A look at the Data 
+
+```{r}
+groningen_cat <- readr::read_csv("./data/1995-2024_groningen.csv")
+knitr::kable(head(groningen_cat))
+```
+
+## Spatial Snapshot 
+
+```{r, dev = "png", dev.args=list(bg="transparent")}
+# Load required packages -------------------------------------------------------
+library(ggplot2)                # plotting
+library(dplyr)                  # data manipulation
+library(colorspace)             # transparent colours
+library(ggtext)                 # element_markdown for subtitle formatting
+library(multipanelfigure)       # arrange multiple plots in a single figure
+
+# Load and prepare data --------------------------------------------------------
+
+## Paths relative to project root
+dir_path <- "./data/"
+quakes_path <- paste0(dir_path, "1995-2024_groningen.csv")
+outline_path <- paste0(dir_path, "Groningen_Field_outline.csv")
+
+## Earthquake catalog
+quakes <- readr::read_csv(file = quakes_path)
+
+quakes <- quakes %>%
+  mutate(
+    Easting = location_X / 1000,
+    Northing = location_Y / 1000,
+    date = lubridate::as_date(date),
+    time = lubridate::hms(time),
+    datetime = date + time
+  )
+
+## Field outline
+outline <- readr::read_csv(file = outline_path)
+
+outline <- outline %>% mutate(
+  X = X / 1000,
+  Y = Y / 1000
+)
+
+# Construct individual plots ---------------------------------------------------
+
+transparent_orange <- adjust_transparency("darkorange", alpha = 0.3)
+title_string <- "Earthquakes in Groningen, 1995-2024"
+subtitle_string <- ''
+
+p1 <- ggplot(data = quakes, aes(x = Easting, y = Northing)) +
+  geom_polygon(data = outline, aes(x = X, y = Y)) +
+  geom_point(aes(size = mag), col = transparent_orange) +
+  xlab("Easting (km)") +
+  ylab("Northing (km)") +
+  ggtitle(title_string, subtitle_string) +
+  scale_size_continuous(name = "Magnitude") +
+  guides(
+    size = guide_legend(
+      title.position = "top",
+      label.position = "bottom",
+      title.hjust = 1)) +
+  coord_fixed() +
+  zvplot::theme_zv() +
+  theme(
+    legend.key = element_rect(fill = "grey20", colour = "grey20"),
+    legend.position = c(0.9,0.9),
+    legend.direction = "horizontal",
+    plot.title.position = "plot",
+    plot.subtitle = element_markdown(size = 11, hjust = 0.5),
+    plot.title = element_text(size = 21, hjust = 0.5),
+    axis.text = element_text(size = 11)) + 
+  theme(
+    panel.background = element_rect(fill='transparent', color=NA), #transparent panel bg
+    plot.background = element_rect(fill='transparent', color=NA), #transparent plot bg
+    #panel.grid.major = element_blank(), #remove major gridlines
+    #panel.grid.minor = element_blank(), #remove minor gridlines
+    #legend.background = element_rect(fill='transparent'), #transparent legend bg
+    #legend.box.background = element_rect(fill='transparent') #transparent legend panel
+  )
+p1
+```
+
+## Temporal Snapshot
+
+```{r}
+p2 <- ggplot(data = quakes) +
+    geom_segment(
+      aes(x = datetime, xend = datetime, y = 0, yend = mag),
+      colour = "darkorange",
+      lwd = 0.6) +
+    xlab("") +
+    ylab("Magnitude") +
+    zvplot::theme_zv() +
+    theme(
+      axis.text = element_text(size = 11),
+      axis.text.x = element_text(face = "bold"))
+p2
+```
+
+```{r}
+#| eval: false
+# Combine into single figure ---------------------------------------------------
+
+figure <- multi_panel_figure(columns = 7, rows = 5, panel_label_type = "none")
+
+figure %<>%
+  fill_panel(p1, row = 1:4, column = 1:7) %<>%
+  fill_panel(p2, row = 5, column = 2:6)
+
+figure
+
+#figure_path <- paste0(dir_path, "2024-01-02_bring-your-own-data.png")
+#save_multi_panel_figure(figure, filename = figure_path)
+```
+
+## Questions 
+
+What statistical models would be suitable for modelling the rate of large earthquakes over time / space / space-time?
+
+:::{.incremental}
+1. Is the rate of (large) earthquakes changing over time?
+2. Are the magnitudes of earthquakes changing over time?
+3. Is the distribution of large earthquake magnitudes consistent with the Gutenberg-Richter law (exponential distribution)?
+4. Is the rate / size of earthquakes the same across space?
+5. Can we define something like a return-level to quantify seismic hazard?
+6. Can we produce a map of seismic hazard over space / time?
+:::
+
+## Tips
+
+::::{.columns}
+:::{.column width="50%"}
+- Aim for 3 - 5 slides.
+
+- Don't worry about polishing graphs. Correct >> Pretty.
+
+- 1 - 2 people to present.
+
+- Tell us about:
+  - what you found, 
+  - what went well, 
+  - what could be better. 
+:::
+:::{.column width="10%"}
+:::
+:::{.column width="40%"}
+![](images/just-have-fun-hand.jpg)
+:::
+:::: 
+
+
+## Build Information {.smaller}
+
+
+```{r}
+pander::pander(sessionInfo())
+```
