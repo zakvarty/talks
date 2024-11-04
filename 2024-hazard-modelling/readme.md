@@ -1,16 +1,30 @@
-# RSS 2023 - Go Figure! 
+# A very brief introduction to statistical hazard modelling
 
 ## Description 
 
-Slides for the talk "Go Figure!", delivered at the pre-conference workshop of the Royal Statistical Society Conference 2023. 
+Slides for the an introductory talk on statistcal approaches to hazard modelling, originally produced for masters students in statistics at the University of Southampton.
 
-![]("images/rss-screenshot.png")
+![]("images/preview.png")
 
 ### Abstract
 
-As the saying goes, a picture is worth a thousand words. If that’s true then the importance of high quality figures should not be underestimated. In this session, we’ll explore how you can effectively support and explain your research using visualisations.
+This talk will provide a whirlwind introduction to the core topics in statistical hazard modelling. 
 
-We’ll begin with some design principles to help your figures to clearly convey your intended meaning. We’ll then develop strategies to adapt your figures for different audiences and introduce tools to make them accessible to a broader audience. To put your newfound knowledge to the test, we’ll conclude the session with a game of broken picture telephone (including prizes for the winners!). 
+I'm giving you the best bits of a five week course in just 30 minutes. That means this is going to be fast. Don't worry about understanding every detail. The point of this talk is simply for you to become aware of some foundational results/models in hazard modelling. 
+
+Towards the end of the talk I'll allude to some ways we can add non-stationarity into these models and to point you towards resources that you can use to explore these ideas at your own pace. 
+
+- why do we care about hazard modelling?
+- risk vs hazard
+- from OLS to EVT
+- ETT and UETT
+- GEV for block maxima
+- GPD for peaks over threshold 
+- adding in non-stationarity "GLM-style"
+- Poisson point processes
+- relaxations of the Poisson model
+- bringing it all back together
+- resources to get started on your own
 
 ## Getting Started
 

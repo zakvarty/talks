@@ -1,0 +1,237 @@
+---
+title: "The impact of personal tutoring <br> on students and staff."
+subtitle: "Impact on staff: Summary of Augustus et al. (2023)"
+author: Zak Varty
+date: ""
+editor: source
+format:
+  revealjs:
+    theme: assets/zv-slides-theme.scss
+    logo: assets/zv-logo-192x192.png
+    bibliography: assets/refs.bib
+    footer: "Imperial Mathematics Teaching Seminar - November 2024 - Zak Varty"
+    menu: true
+    slide-number: true
+    show-slide-number: all # (all / print / speaker)
+    self-contained: true # (set to true before publishing html to web)
+    width: 1600 # default is 1050
+    height: 900 # default is 850
+    incremental: false
+---
+
+## Two sides to every coin 
+
+```{r}
+#| fig-align: center
+knitr::include_graphics("images/coin-toss.png")
+```
+
+:::{.notes}
+- Depending on the institution, PT can be academic, pastoral or both. 
+- In either case, its benefits seem to come from building a personal relationship and being the face of the institution. 
+- This relational aspect means there has to be two sides to the story. 
+- We heard from Ioanna about the impact on students but what about the impact on staff? 
+:::
+
+
+## Introducing Augustus et al
+
+
+::: {layout-ncol=3}
+![Jo Augustus](images/augustus.png){width=500}
+
+![Dawn Goodall](images/goodall.png){width=400}
+
+![Briony Williams](images/williams.png){width=500}
+:::
+
+
+
+:::{.notes}
+- Joint work between U Cumbria and U Worcester
+- Principle lecturer and mental health specialist, attitudes to mental health. 
+- Sociologist, teaches on foundation degrees getting students to consider theoretical underpinnings of their practice. 
+- Occupational therapist, clinical experience in community mental health. 
+- Linked by institution and teaching of paramedic science. 
+:::
+
+
+## Augustus et al (2023)
+
+**IMAGE: Paper header**
+
+> **Aim:** _"to establish how well-equipped PATs were to fulfil their role supporting students"_.
+
+. . . 
+
+Interviews followed by a qualitative thematic analysis of responses "focused on looking for issues of significance to the participants". 
+
+. . .
+
+> "The high number of respondents willing to participate in the reserach may demonstrate a need for a forum in which PATs can voice concerns"
+
+:::{.notes}
+- aim of paper was to...
+- they did this using...
+- The researchers were surprised by ... (n = 26)
+:::
+
+## Study recruitment and eligibility criteria
+
+Study recruited participants from across a "medium sized University in the West Midlands" 
+
+<br>
+
+> "participants needed to be a full-time university lecturer and have been a PAT for at least a year".
+
+<br>
+
+. . . 
+
+- Poses a sample frame issue
+  - part-time and teaching-focused staff are more likely to be early career, women or BAME
+  - each of these is likely to influence the experience of a personal tutor. 
+- Opt-in selection bias would over-represent tutors with negative experiences
+
+## Findings 
+
+<br> <br>
+
+:::: {.columns}
+
+::: {.column width="30%"}
+
+### Self
+
+:::{.incremental}
+- self as context
+- past transferable experience
+- boundaries
+:::
+
+:::
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="30%"}
+
+### Others / Systems
+
+:::{.incremental}
+- mental health
+- deployment and workload
+- systems and support
+:::
+
+:::
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="30%"}
+
+### Resilience
+
+:::{.incremental}
+- burden, tiredness and accumulation
+- experience, age, boundaries and networks
+:::
+
+:::
+::::
+
+## Expectations and Boundaries 
+
+<br> <br>
+
+> 'real blurring of a professional relationship between students, now email me at all times weekends and evenings you know I need to contact you urgently and I don't have to respond bith there is an innate pressure' - Participant 1
+
+<br><br>
+
+. . . 
+
+> "PATs hold strong opinions of how the PAT should be done, often suggestiong that their way is right and that the approach of others is wrong, with the other doing too much or too little"
+
+
+## Mental Health
+
+- YouGov poll (2016) found 1 in 4 HE students dealing with mental health difficulties, 3/4 of those anxiety or depression.
+
+> PAT as unqualified counsellor:
+>
+> "I'm not a counsellor or a marriage counsellor and it might be worrying if people are given bad advice but thing I'm giving good advice." - Participant 9
+
+> "The waiting time for counselling is 14 weeks which is not good and really hard to tell students in need" - Participant 2
+
+## Having the time for each tuttee
+
+> "not necessarily an issue of being overworked, rather it is the immediacy of the required response, due to the humanness of the relationship"
+
+<br>
+
+> "We are kind of glad if they don't turn up, if all the students I have turned up I would not be able to cope." - Participant 4
+
+<br>
+
+> "I enjoy getting to know students individually, building relationships with then , spending time with them. I really like that part of the job. I wouldn't want to not do that job even though the occasional one really gets to you." - Participant 2
+
+:::{.notes}
+- makes me think of how admin mailboxes are used as a distancing measure
+- makes me think of office hours and how I encourage students to attend but very few do. 
+- good bits too, one opportunity for human connection
+- put at risk if no redundancy built into staff schedules.
+:::
+
+## Managing emotional and energy 
+
+- Implicit assumption that all staff experience similar demand and are equally capable of managing the emotional toll of PAT work.
+
+> "there are times when I don't feel very resilient... we've had some personal difficulties at home... work was a bit of a sanctuary but I carried this emotion around with me." - Participant 27
+
+> "I have a work ethic that I recently addressed because I was doing far too much and it was affecting me mentally" - Participant 3
+
+> "If I did 4 tutorials with 30 students that would take almost a week" - Participant 13
+
+:::{.notes}
+- Needs to be considered that tutors are people too
+- Ability to cope can vary 
+  - over time, 
+  - with other workload
+  - with home circumstances
+  - with topic
+:::
+
+## Recommendations / Conclusions
+
+- They found there to be a desire and a need for PAT training
+- Not only initial training but ongoing support and CPD
+- Acknowledge that mandating this is not necessarily the way to go.
+
+<br>
+
+. . .
+
+- Individual supervision (mentor/teaching buddy) as a tool for mitigating burden and promoting resilience. 
+
+<br>
+
+. . .
+
+- Workplace resilience training to improve well-being and productivity.
+
+## Thank you, have some questions 
+
+<br>
+
+6. Is there a difference in your perceived confidence or competence depending on the issues brought to you by students?
+
+<br>
+
+14. What strategies do you have to reduce the emotional burden [of PAT work]?
+
+## Build Information {.smaller}
+
+```{r}
+pander::pander(sessionInfo())
+```
