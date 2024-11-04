@@ -1,16 +1,16 @@
-# RSS 2023 - Go Figure! 
+# Imperial Mathematics Teaching Seminar
 
 ## Description 
 
-Slides for the talk "Go Figure!", delivered at the pre-conference workshop of the Royal Statistical Society Conference 2023. 
+Slides for my half of a reading group discussion at the Imperial Mathematics Teaching Seminar. Delivered jointly with Ioanna Papatsouma. 
 
-![]("images/rss-screenshot.png")
+![]("images/preview.png")
 
 ### Abstract
 
-As the saying goes, a picture is worth a thousand words. If that’s true then the importance of high quality figures should not be underestimated. In this session, we’ll explore how you can effectively support and explain your research using visualisations.
+This session will explore the impact that personal tutoring can have on both students and staff. We will examine how personal tutoring influences academic success, student well-being, and staff-student relationships by summarising two studies covering the effectiveness of tutoring programs, their benefits and challenges for both students and staff.
 
-We’ll begin with some design principles to help your figures to clearly convey your intended meaning. We’ll then develop strategies to adapt your figures for different audiences and introduce tools to make them accessible to a broader audience. To put your newfound knowledge to the test, we’ll conclude the session with a game of broken picture telephone (including prizes for the winners!). 
+The session aims to spark a discussion on best practices and potential improvements in the tutoring system and how it might be optimised to ensure a positive, supportive and sustainable system for everyone involved.
 
 ## Getting Started
 
