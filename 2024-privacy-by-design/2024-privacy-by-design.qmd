@@ -1,0 +1,555 @@
+---
+title: "Privacy by Design <br> in the machine learning pipeline"
+subtitle: "<br>Workshop, University of Venice"
+author: Zak Varty
+date: "November, 2024"
+editor: source
+format:
+  revealjs:
+    theme: assets/zv-slides-theme.scss
+    logo: assets/zv-logo-192x192.png
+    bibliography: ../zv-talk-refs.bib
+    footer: "Privacy by Design - November 2024 - Zak Varty"
+    menu: true
+    slide-number: true
+    show-slide-number: all # (all / print / speaker)
+    self-contained: true # (set to true before publishing html to web)
+    width: 1600 # default is 1050
+    height: 900 # default is 850
+    incremental: false
+title-slide-attributes:
+    data-background-color: "#555555"
+---
+
+## Hello! Who am I? 
+
+:::{.columns}
+:::{.column width="50%"}
+- Statistician by training, got to where I am through medical, environmental and industrial applications. 
+
+- Teaching Fellow at Imperial College London 
+  - Data Science, Data Ethics
+  
+- Privacy, fairness and explainability in ML. 
+  - Capable enthusiast, realist / pessimist
+
+Really it all comes down to doing good statistics well. 
+:::
+:::{.column width="50%"}
+<br>
+```{r who-am-i}
+#| echo: false
+#| fig-align: center
+#| out-width: 50%
+knitr::include_graphics("images/zv_c.jpg")
+```
+:::
+::::
+
+## Why do we care about privacy? 
+
+. . .
+
+1. **Protecting Sensitive Data:** ML models often train on personal or confidential data (health records, financial info), and safeguarding this data is essential to prevent misuse or unauthorized access.
+
+2. **Compliance with Regulations:** Laws like GDPR require organisations to protect user privacy, impacting how data is collected, stored, and used in ML.
+
+3. **Preventing Data Leakage** Models can unintentionally expose sensitive information from their training data, risking user privacy if someone exploits the model’s outputs.
+
+4. **Building Trust:** Privacy-conscious ML practices foster trust among users, making them more willing to share data and participate in systems that use ML.
+
+5. **Avoiding Discrimination:** Privacy techniques can reduce bias and discrimination risks, ensuring the ML model treats users fairly without targeting sensitive attributes.
+
+
+# "If you have nothing to hide, you have nothing to fear" 
+
+:::{.notes}
+- Assumes everyone has an equal tolerance for information exposure
+- Assumes that what needs to be private does not change over time or space
+:::
+
+# "The benefits outweight the costs" 
+
+:::{.notes}
+- subjective decision
+- have to draw the line somewhere
+- how do we ensure that line is not crossed?
+- what can we do without crossing that line?
+:::
+
+## Machine Learning Pipeline 
+
+```{r ml-pipeline}
+#| echo: false
+#| fig-align: center
+knitr::include_graphics("images/private-ml-piepline.png")
+```
+
+## Machine Learning ~~Pipeline~~ Life Cycle 
+
+```{r ml-lifecycle}
+#| echo: false
+#| fig-align: center
+knitr::include_graphics("images/private-ml-cycle.png")
+```
+
+. . . 
+
+Reality is much messier. See @gelman2013garden for a discussion of the implications. 
+
+:::{.notes}
+- describe each stage
+- not recall linear, iterative process
+- reality much messier
+  - presents issues for valid inference 
+  - see garden of forking paths for more
+:::
+
+## This workshop 
+
+::::{.columns}
+:::{.column width="45%"}
+:::{.fragment}
+- Work through the ML life cycle
+- How could and have things gone wrong
+:::
+
+<br>
+
+:::{.fragment}
+- What tools do we have? 
+- What are their limitations?
+:::
+
+<br>
+
+:::{.fragment}
+- Interactive bits, every now and then
+:::
+:::
+:::{.column width="10%"}
+:::
+:::{.column width="45%"}
+```{r ml-lifecycle-2}
+#| echo: false
+#| fig-align: center
+#| out-width: 75%
+knitr::include_graphics("images/private-ml-cycle.png")
+```
+:::
+::::
+
+# 1. Data Collection {background-color="#555555"}
+
+## Collecting Appropriate Data - GDPR
+
+::::{.columns}
+:::{.column width="60%"}
+- Collect only necessary data, purpose clear at time of collection 
+- Data subject has right to 
+  - access
+  - rectify
+  - erase
+  - object
+- Consequences both financial and reputational
+
+:::
+:::{.column width="40%"}
+```{r gdpr-screenshot}
+#| echo: false
+#| fig-align: center
+# knitr::include_graphics()
+# GDPR screenshot
+```
+:::
+::::
+
+:::{.notes}
+- Only collect necessary information
+- Purpose clear at time of collection
+  - hypothetical example: BMI study to H & M
+- Data subject has right to access, rectify erase and object
+- huge financial and reputational consequences
+  - recently LLM integration 
+:::
+
+## Collecting Data - Hard-to-Reach Groups
+
+Standard ML assumes that data are cheap and easy to collect. 
+
+Assumption that data are cheap and easy to collect. Out of the box model fitting 
+assumes we are working with big, representative and independent samples.
+
+. . .
+
+- Applications of ML to social science to study hard-to-reach populations: persecuted groups, stigmatised behaviours. 
+
+- Standard study designs and analysis techniques will fail. 
+
+
+## Snowball Sampling - Hidden Network
+
+```{r snowball-1}
+#| echo: false
+#| fig-align: center
+knitr::include_graphics("images/snowball-1.png")
+```
+
+## Snowball Sampling - Initial Recruitment
+
+```{r snowball-2}
+#| echo: false
+#| fig-align: center
+knitr::include_graphics("images/snowball-2.png")
+```
+
+## Snowball Sampling - Referral Round 1
+
+```{r snowball-3}
+#| echo: false
+#| fig-align: center
+knitr::include_graphics("images/snowball-3.png")
+```
+
+## Snowball Sampling - Referral Round 2
+
+```{r snowball-4}
+#| echo: false
+#| fig-align: center
+knitr::include_graphics("images/snowball-4.png")
+```
+
+## Snowball Sampling - Referral Round 3
+
+```{r snowball-5}
+#| echo: false
+#| fig-align: center
+knitr::include_graphics("images/snowball-5.png")
+```
+
+## Snowball Sampling 
+
+::::{.columns}
+
+:::{.column width="50%"}
+By using subject-driven sampling design, we can better explore the hard to reach target population while preserving the privacy of data subjects who _do not_ want to be included in the study. 
+
+:::{.fragment}
+- Bonus: Also allows us to study community (network) structure if we are interested in that. 
+:::
+
+:::{.fragment}
+- Drawbacks:
+  - "isolated" nodes, 
+  - partitioned graphs, 
+  - adapting model fitting to non-uniform sampling. 
+:::
+:::
+:::{.column width="50%"}
+```{r snowball-final}
+#| echo: false
+#| fig-align: center
+#| out-width: "70%"
+knitr::include_graphics("images/snowball-5.png")
+```
+:::
+::::
+
+
+## Collecting Data - Asking Difficult Questions
+
+Even if data subjects are easy to access and sample from, they may not wish to answer honestly. 
+
+_Can you give me some examples?_
+
+. . . 
+
+:::{.incremental}
+- cheated on an exam? 
+- cheated on a romantic / sexual partner? 
+- experienced suicidal ideation? 
+- killed another person? 
+:::
+
+. . .
+
+Dishonest answers will _bias_ any subsequent analysis, leading us to underestimate the prevalence of an "undesirable outcome". 
+
+. . .
+
+(Interesting intersection with survey design and psychology. The order and way that you ask questions can influence responses but we will focus on a single question here.)
+
+## Direct Response Survey 
+
+$$\Pr(Y_i = 1) = \theta \quad \text{and} \quad \Pr(Y_i = 0) = 1 - \theta.$$ 
+Method of Moments Estimator: (General dataset)
+
+$$ \hat \Theta = \hat\Pr(Y_i = 1)$$ 
+
+. . .
+
+$$ \hat \Theta = \frac{1}{n}\sum_{i=1}^n \mathbb{I}(Y_i = 1) = \bar Y = \frac{\#\{yes\}}{\#\{subjects\}}.$$
+
+. . .
+
+Method of Moments Estimate: (Specific dataset)
+$$ \hat \theta = \frac{1}{n}\sum_{i=1}^n \mathbb{I}(y_i = 1) = \bar y.$$
+
+## MoM Example 
+
+Suppose I ask 100 people whether they have ever been unfaithful in a romantic relationship and 24 people respond "Yes". 
+
+<br>
+
+What is your best guess of the proportion of all people who have been unfaithful? 
+
+. . . 
+
+$\hat\theta = \bar y = \frac{24}{100}$
+
+<br>
+
+How confident are you about that guess? 
+
+Would that change if I had 1 person responding "Yes"?
+
+Would that change if I had 99 people responding "Yes"?
+
+
+## MoM - Nice Properties 
+
+Over lots of samples we get it right on average: 
+
+$\mathbb{E}_Y[\hat\Theta] = \mathbb{E}_Y\left[\frac{1}{n}\sum_{i=1}^n \mathbb{I}(Y_i = 1)\right]  = \frac{1}{n}\sum_{i=1}^n \mathbb{E}_Y\left[ \mathbb{I}(Y_i = 1)\right] = \frac{n \theta}{n} = \theta$
+
+. . . 
+
+As the number of samples gets large, we get more confident and therefore recover the truth 
+
+\begin{align*}
+\text{Var}_Y[\hat\Theta] 
+&= \text{Var}_Y\left[\frac{1}{n}\sum_{i=1}^n \mathbb{I}(Y_i = 1)\right] \\
+&= \frac{1}{n^2}\sum_{i=1}^n\text{Var}_Y\left[\mathbb{I}(Y_i = 1)\right] \\
+&= \frac{1}{n^2}\sum_{i=1}^n p(1-p) \\
+&= \frac{n p (1-p)}{n^2} \\
+&= \frac{p (1-p)}{n} \rightarrow 0
+\end{align*}
+
+## Adding Privacy - Randomised Response 
+
+- Mathematically nice but in reality people lie. 
+
+- Our estimator worked "best" for central values of $\theta$, unlikely for stigmatised events. 
+
+- Add random element to survey to provide plausible deniability. 
+  - Flip a fair coin. If heads, switch your answer. 
+
+- MoM estimation: Equate probabilities and proportions. 
+
+## Estimation from Randomised Response Data 
+
+::::{.columns}
+:::{.column width="50%"}
+
+Consider using a weighted coin, probability $p$ of telling truth. Derive an expression for the probability of answering "Yes". 
+ 
+:::{.fragment}
+\begin{align*}
+\Pr(\text{Yes})  &= \theta p + (1 - \theta)(1 - p) \\
+& \approx \frac{\#\{yes\}}{\#\{subjects\}} \\
+&= \bar y
+\end{align*}
+:::
+:::{.fragment}
+Rearrange this expression to get a formula for $\hat \theta$. 
+:::
+:::{.fragment}
+$$\hat \theta = \frac{\bar y - 1 + p}{2p -1}.$$
+:::
+:::
+:::{.column width="50%"}
+```{r randomised-response-tree}
+#| echo: false
+#| fig-align: center
+#| out-width: "60%"
+knitr::include_graphics("images/randomised-response-tree.png")
+```
+:::
+::::
+
+## Randomised Response Activities 
+
+$$ \hat \theta = \frac{\bar y - 1 + p}{2p -1}.$$
+
+- Direct response is a special case of randomised response. How can we use that to check our working?
+
+. . . 
+
+- If our previous survey results came from this randomised response survey design with $p = 0.25$, what is your best guess of the proportion of people who have been unfaithful? 
+
+. . .  
+
+- Are you more or less confident in this estimate than previously, when we had the same data but from a direct response design? 
+
+. . . 
+
+- What does your confidence depend on? And which of those factors do you have knowledge of / control over? 
+
+. . . 
+
+- When would this estimation procedure break and why? How could we fix that?
+
+## Randomised Response - Privacy Schematic 
+
+```{r randomised-response-privacy}
+#| echo: false
+#| fig-align: center
+#| out-width: "100%"
+knitr::include_graphics("images/randomised-response-privacy.png")
+```
+
+## Randomised Response 
+
+- Approach to privacy for single, binary response. 
+
+- Issues with applying to multiple questions, e.g. surveys with follow on questions. 
+
+- Extensions to categorical and continuous responses and predictors 
+
+- General principle of adding noise
+  - Need to make observations indistinguishable
+  - Need to preserve important aspects of "signal"
+
+## Data Collection Summary 
+
+- _Collect what you need_ and use that information only for its intended purpose.
+
+- _Targeting hard-to-reach populations can be challenging_ but possible by combining survey design and specific learning approaches. Keeps statisticians in a job!
+
+- _Asking difficult questions_ can lead to biased responses. Plausible deniability through randomised response designs can help.
+
+# 2. Data Storage {background-color="#555555"}
+
+## Encryption 
+
+Once we have gone to the effort of collecting data we don't want to just leave it lying around for anyone to access. 
+
+::::{.columns}
+:::{.column width="50%"}
+<br>
+$$ \text{Plain text} \overset{f}{\rightarrow} \text{Cipher Text}$$
+<br>
+$$ \text{Cipher text} \overset{f^{-1}}{\rightarrow} \text{Plain Text}$$
+<br>
+$$ f(\text{data}, \text{key})$$
+Many encryption schemes depending on the data to be encrypted and how the key is to be distributed. 
+:::
+:::{.column width="50%"}
+```{r encryption}
+#| echo: false
+#| fig-align: center
+#| out-width: "80%"
+knitr::include_graphics("images/encryption.png")
+```
+:::
+::::
+
+## Caesar Cipher 
+
+```{r caesar}
+#| echo: false
+#| fig-align: center
+#| out-width: "80%"
+knitr::include_graphics("images/caesar-cipher-zak.png")
+```
+
+. . .
+
+Write your own short message and pass it to a friend to decode. 
+
+. . . 
+
+What are some benefits and drawbacks of this encryption scheme?
+
+
+## K-anonymity {.incremental}
+
+What happens if someone gets access to the data? 
+
+<br> 
+
+- $k$-anonymity is a measure of privacy within a dataset. 
+
+- Given a set of predictor-outcome responses, each unique combination forms an _equivalence class_. 
+
+- The smallest equivalence class of a $k$-anonymous dataset is of size $k$.
+
+- Equivalently, each individual is indistinguishable from at least $k-1$ others.
+
+## K-anonymity Example 
+
+```{r k-anon-survey}
+#| echo: false
+#| fig-align: center
+#| out-width: "100%"
+knitr::include_graphics("images/k-anon-survey.png")
+```
+
+## K-anonymity Worked Example 
+
+```{r k-anon-example}
+#| echo: false
+#| fig-align: center
+knitr::include_graphics("images/k-anon-example.png")
+```
+
+## K-anonymity Your Turn
+
+I asked ChatGPT to generate 4-anonymous datasets but it hasn't done a good job.
+    
+- Establish the true value of k for your dataset.
+
+- Use pseudonymisation, aggregation, redaction and partial-redaction to make your dataset 4-anonymous.
+
+## K-anonymity Feedback 
+
+- How did ChatGPT do?
+- How did you alter the anonymity level of your dataset?
+- What did you have to consider as you were doing this?
+
+## K-anonymity Drawbacks 
+
+What do you think some of the limitations of $k$-anonymity might be? 
+
+. . . 
+
+- Knowing what is important before analysis. 
+- Publishing multiple versions of the dataset. 
+- Can be checked easily but not implemented algorithmically.
+- External data attacks; Jane Doe, Latanya Sweeney 
+
+## Data Storage - Summary 
+
+- Don't leave important data lying around unprotected. 
+- Choose a level of security appropriate to the sensitivity of the data.
+
+- Consider the consequences of someone gaining access to the data. 
+- Remember that your data does not live in isolation. 
+
+- K-anonymity not a good measure of privacy but an accessible starting point.
+
+# End of Part 1 <br> Tomorrow: analyitcs, modelling and production.
+
+# 3. Data Analytics {background-color="#555555"}
+
+# 4. Modelling {background-color="#555555"}
+
+# 5. Going into Production {background-color="#555555"}
+
+## Build Information {.smaller}
+
+```{r}
+pander::pander(sessionInfo())
+```
+
+## References
