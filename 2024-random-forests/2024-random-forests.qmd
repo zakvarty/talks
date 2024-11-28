@@ -1,6 +1,6 @@
 ---
-title: "Introduction to Bagging and Random Forests"
-subtitle: ""
+title: "Introduction to Random Forests"
+subtitle: "(via bootstrap aggregation, in ten minutes or less)"
 author: Zak Varty
 date: ""
 editor: source
@@ -28,7 +28,7 @@ library(rpart)
 library(rpart.plot)
 ```
 
-## Decision Tree Recap
+## Classification and Regression Trees -  Recap
 
 ::::{.columns} 
 :::{.column width="50%"}
@@ -325,24 +325,6 @@ $$ \text{Var}(\bar Y) = \frac{\sigma^2}{n} + \underset{\text{minimise this}}{\un
 . . . 
 
 > Lab: Comparing single tree, bagging and random forest for student grade prediction.
-
-```{r}
-#| fig-align: center
-#knitr::include_graphics("images/coin-toss.png")
-```
-
-## Introducing Augustus et al
-
-<!--
-::: {layout-ncol=3}
-![Jo Augustus](images/augustus.png){width=500}
-
-![Dawn Goodall](images/goodall.png){width=400}
-
-![Briony Williams](images/williams.png){width=500}
-:::
-
--->
 
 
 
