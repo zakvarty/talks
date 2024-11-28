@@ -60,7 +60,7 @@ peng_grid$prediction <- rpart.predict(tree, newdata = peng_grid, type = "class")
 :::
 ::::
 
-## Decision Tree Recap 
+## Classification and Regression Trees - Recap 
 
 ::::{.columns}
 :::{.column width="50%"}
@@ -98,13 +98,13 @@ This is the first example of an ensemble model. Common in weather/hazard modelli
 
 ## Bagging
 
-**Issue: we only have one dataset.** 
+**Issue: we only have one set of training data.** 
 
-Bagging is a portmanteau of Bootstrap Aggregation
+_Bootstrap_ Aggregation
 
-1. Re-sample original data $x$ with replacement, $B$ times: $\{x^1,,x^2,x^B\}$.
+1. Re-sample with replacement our original data $x$, $B$ times: $\{x^1,\ldots,x^2,x^B\}$.
 2. Fit tree $\hat f_b(x)$ using $x^b$ for $b$ in $1,\ldots,B$.
-3. Take mean (modal) prediction from all regression (classification) trees
+3. Take our ensemble prediction as the mean (mode) of all regression (classification) tree predictions.
 
 $$ \hat f(x) = \frac{1}{B}\sum_{i=1}^{n}\hat f_b(x).$$
 
