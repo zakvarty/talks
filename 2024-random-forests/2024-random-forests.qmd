@@ -324,7 +324,7 @@ $$ \text{Var}(\bar Y) = \frac{\sigma^2}{n} + \underset{\text{minimise this}}{\un
 
 . . . 
 
-> Lab: Comparing single tree, bagging and random forest for student grade prediction.
+> Lab: Comparison of single tree, bagging and random forest for student grade prediction.
 
 
 
