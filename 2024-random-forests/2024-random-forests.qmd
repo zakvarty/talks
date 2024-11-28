@@ -1,5 +1,5 @@
 ---
-title: "Introduction to Random Forests"
+title: "Introduction to Bagging and Random Forests"
 subtitle: ""
 author: Zak Varty
 date: ""
