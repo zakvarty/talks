@@ -1,0 +1,924 @@
+---
+title: "Privacy by Design <br> in the machine learning pipeline"
+subtitle: "<br>Workshop, University of Venice"
+author: Zak Varty
+date: "November, 2024"
+editor: source
+format:
+  revealjs:
+    theme: assets/zv-slides-theme.scss
+    logo: assets/zv-logo-192x192.png
+    bibliography: ../zv-talk-refs.bib
+    footer: "Privacy by Design - November 2024 - Zak Varty"
+    menu: true
+    slide-number: true
+    show-slide-number: all # (all / print / speaker)
+    self-contained: true # (set to true before publishing html to web)
+    width: 1600 # default is 1050
+    height: 900 # default is 850
+    incremental: false
+title-slide-attributes:
+    data-background-color: "#555555"
+---
+
+## Hello! Who am I? 
+
+:::{.columns}
+:::{.column width="50%"}
+- Statistician by training, got to where I am through medical, environmental and industrial applications. 
+
+- Teaching Fellow at Imperial College London 
+  - Data Science, Data Ethics
+  
+- Privacy, fairness and explainability in ML. 
+  - Capable enthusiast, realist / pessimist
+
+Really it all comes down to doing good statistics well. 
+:::
+:::{.column width="50%"}
+<br>
+```{r who-am-i}
+#| echo: false
+#| fig-align: center
+#| out-width: 50%
+knitr::include_graphics("images/zv_c.jpg")
+```
+:::
+::::
+
+## Why do we care about privacy? 
+
+. . .
+
+1. **Protecting Sensitive Data:** ML models often train on personal or confidential data (health records, financial info), and safeguarding this data is essential to prevent misuse or unauthorized access.
+
+2. **Compliance with Regulations:** Laws like GDPR require organisations to protect user privacy, impacting how data is collected, stored, and used in ML.
+
+3. **Preventing Data Leakage** Models can unintentionally expose sensitive information from their training data, risking user privacy if someone exploits the model’s outputs.
+
+4. **Building Trust:** Privacy-conscious ML practices foster trust among users, making them more willing to share data and participate in systems that use ML.
+
+5. **Avoiding Discrimination:** Privacy techniques can reduce bias and discrimination risks, ensuring the ML model treats users fairly without targeting sensitive attributes.
+
+
+# "If you have nothing to hide, you have nothing to fear" 
+
+:::{.notes}
+- Assumes everyone has an equal tolerance for information exposure
+- Assumes that what needs to be private does not change over time or space
+:::
+
+# "The benefits outweight the costs" 
+
+:::{.notes}
+- subjective decision
+- have to draw the line somewhere
+- how do we ensure that line is not crossed?
+- what can we do without crossing that line?
+:::
+
+## Machine Learning Pipeline 
+
+```{r ml-pipeline}
+#| echo: false
+#| fig-align: center
+knitr::include_graphics("images/private-ml-piepline.png")
+```
+
+## Machine Learning ~~Pipeline~~ Life Cycle 
+
+```{r ml-lifecycle}
+#| echo: false
+#| fig-align: center
+knitr::include_graphics("images/private-ml-cycle.png")
+```
+
+. . . 
+
+Reality is much messier. See @gelman2013garden for a discussion of the implications. 
+
+:::{.notes}
+- describe each stage
+- not recall linear, iterative process
+- reality much messier
+  - presents issues for valid inference 
+  - see garden of forking paths for more
+:::
+
+## This workshop 
+
+::::{.columns}
+:::{.column width="45%"}
+:::{.fragment}
+- Work through the ML life cycle
+- How could and have things gone wrong
+:::
+
+<br>
+
+:::{.fragment}
+- What tools do we have? 
+- What are their limitations?
+:::
+
+<br>
+
+:::{.fragment}
+- Interactive bits, every now and then
+:::
+:::
+:::{.column width="10%"}
+:::
+:::{.column width="45%"}
+```{r ml-lifecycle-2}
+#| echo: false
+#| fig-align: center
+#| out-width: 75%
+knitr::include_graphics("images/private-ml-cycle.png")
+```
+:::
+::::
+
+# 1. Data Collection {background-color="#555555"}
+
+## Collecting Appropriate Data - GDPR
+
+::::{.columns}
+:::{.column width="60%"}
+- Collect only necessary data, purpose clear at time of collection 
+- Data subject has right to 
+  - access
+  - rectify
+  - erase
+  - object
+- Consequences both financial and reputational
+
+:::
+:::{.column width="40%"}
+```{r gdpr-screenshot}
+#| echo: false
+#| fig-align: center
+# knitr::include_graphics()
+# GDPR screenshot
+```
+:::
+::::
+
+:::{.notes}
+- Only collect necessary information
+- Purpose clear at time of collection
+  - hypothetical example: BMI study to H & M
+- Data subject has right to access, rectify erase and object
+- huge financial and reputational consequences
+  - recently LLM integration 
+:::
+
+## Collecting Data - Hard-to-Reach Groups
+
+Standard ML assumes that data are cheap and easy to collect. 
+
+Assumption that data are cheap and easy to collect. Out of the box model fitting 
+assumes we are working with big, representative and independent samples.
+
+. . .
+
+- Applications of ML to social science to study hard-to-reach populations: persecuted groups, stigmatised behaviours. 
+
+- Standard study designs and analysis techniques will fail. 
+
+
+## Snowball Sampling - Hidden Network
+
+```{r snowball-1}
+#| echo: false
+#| fig-align: center
+knitr::include_graphics("images/snowball-1.png")
+```
+
+## Snowball Sampling - Initial Recruitment
+
+```{r snowball-2}
+#| echo: false
+#| fig-align: center
+knitr::include_graphics("images/snowball-2.png")
+```
+
+## Snowball Sampling - Referral Round 1
+
+```{r snowball-3}
+#| echo: false
+#| fig-align: center
+knitr::include_graphics("images/snowball-3.png")
+```
+
+## Snowball Sampling - Referral Round 2
+
+```{r snowball-4}
+#| echo: false
+#| fig-align: center
+knitr::include_graphics("images/snowball-4.png")
+```
+
+## Snowball Sampling - Referral Round 3
+
+```{r snowball-5}
+#| echo: false
+#| fig-align: center
+knitr::include_graphics("images/snowball-5.png")
+```
+
+## Snowball Sampling 
+
+::::{.columns}
+
+:::{.column width="50%"}
+By using subject-driven sampling design, we can better explore the hard to reach target population while preserving the privacy of data subjects who _do not_ want to be included in the study. 
+
+:::{.fragment}
+- Bonus: Also allows us to study community (network) structure if we are interested in that. 
+:::
+
+:::{.fragment}
+- Drawbacks:
+  - "isolated" nodes, 
+  - partitioned graphs, 
+  - adapting model fitting to non-uniform sampling. 
+:::
+:::
+:::{.column width="50%"}
+```{r snowball-final}
+#| echo: false
+#| fig-align: center
+#| out-width: "70%"
+knitr::include_graphics("images/snowball-5.png")
+```
+:::
+::::
+
+
+## Collecting Data - Asking Difficult Questions
+
+Even if data subjects are easy to access and sample from, they may not wish to answer honestly. 
+
+_Can you give me some examples?_
+
+. . . 
+
+:::{.incremental}
+- cheated on an exam? 
+- cheated on a romantic / sexual partner? 
+- experienced suicidal ideation? 
+- killed another person? 
+:::
+
+. . .
+
+Dishonest answers will _bias_ any subsequent analysis, leading us to underestimate the prevalence of an "undesirable outcome". 
+
+. . .
+
+(Interesting intersection with survey design and psychology. The order and way that you ask questions can influence responses but we will focus on a single question here.)
+
+## Direct Response Survey 
+
+$$\Pr(Y_i = 1) = \theta \quad \text{and} \quad \Pr(Y_i = 0) = 1 - \theta.$$ 
+Method of Moments Estimator: (General dataset)
+
+$$ \hat \Theta = \hat\Pr(Y_i = 1)$$ 
+
+. . .
+
+$$ \hat \Theta = \frac{1}{n}\sum_{i=1}^n \mathbb{I}(Y_i = 1) = \bar Y = \frac{\#\{yes\}}{\#\{subjects\}}.$$
+
+. . .
+
+Method of Moments Estimate: (Specific dataset)
+$$ \hat \theta = \frac{1}{n}\sum_{i=1}^n \mathbb{I}(y_i = 1) = \bar y.$$
+
+## MoM Example 
+
+Suppose I ask 100 people whether they have ever been unfaithful in a romantic relationship and 24 people respond "Yes". 
+
+<br>
+
+What is your best guess of the proportion of all people who have been unfaithful? 
+
+. . . 
+
+$\hat\theta = \bar y = \frac{24}{100}$
+
+<br>
+
+How confident are you about that guess? 
+
+Would that change if I had 1 person responding "Yes"?
+
+Would that change if I had 99 people responding "Yes"?
+
+
+## MoM - Nice Properties 
+
+Over lots of samples we get it right on average: 
+
+$\mathbb{E}_Y[\hat\Theta] = \mathbb{E}_Y\left[\frac{1}{n}\sum_{i=1}^n \mathbb{I}(Y_i = 1)\right]  = \frac{1}{n}\sum_{i=1}^n \mathbb{E}_Y\left[ \mathbb{I}(Y_i = 1)\right] = \frac{n \theta}{n} = \theta$
+
+. . . 
+
+As the number of samples gets large, we get more confident and therefore recover the truth 
+
+\begin{align*}
+\text{Var}_Y[\hat\Theta] 
+&= \text{Var}_Y\left[\frac{1}{n}\sum_{i=1}^n \mathbb{I}(Y_i = 1)\right] \\
+&= \frac{1}{n^2}\sum_{i=1}^n\text{Var}_Y\left[\mathbb{I}(Y_i = 1)\right] \\
+&= \frac{1}{n^2}\sum_{i=1}^n p(1-p) \\
+&= \frac{n p (1-p)}{n^2} \\
+&= \frac{p (1-p)}{n} \rightarrow 0
+\end{align*}
+
+## Adding Privacy - Randomised Response 
+
+- Mathematically nice but in reality people lie. 
+
+- Our estimator worked "best" for central values of $\theta$, unlikely for stigmatised events. 
+
+- Add random element to survey to provide plausible deniability. 
+  - Flip a fair coin. If heads, switch your answer. 
+
+- MoM estimation: Equate probabilities and proportions. 
+
+## Estimation from Randomised Response Data 
+
+::::{.columns}
+:::{.column width="50%"}
+
+Consider using a weighted coin, probability $p$ of telling truth. Derive an expression for the probability of answering "Yes". 
+ 
+:::{.fragment}
+\begin{align*}
+\Pr(\text{Yes})  &= \theta p + (1 - \theta)(1 - p) \\
+& \approx \frac{\#\{yes\}}{\#\{subjects\}} \\
+&= \bar y
+\end{align*}
+:::
+:::{.fragment}
+Rearrange this expression to get a formula for $\hat \theta$. 
+:::
+:::{.fragment}
+$$\hat \theta = \frac{\bar y - 1 + p}{2p -1}.$$
+:::
+:::
+:::{.column width="50%"}
+```{r randomised-response-tree}
+#| echo: false
+#| fig-align: center
+#| out-width: "60%"
+knitr::include_graphics("images/randomised-response-tree.png")
+```
+:::
+::::
+
+## Randomised Response Activities 
+
+$$ \hat \theta = \frac{\bar y - 1 + p}{2p -1}.$$
+
+- Direct response is a special case of randomised response. How can we use that to check our working?
+
+. . . 
+
+- If our previous survey results came from this randomised response survey design with $p = 0.25$, what is your best guess of the proportion of people who have been unfaithful? 
+
+. . .  
+
+- Are you more or less confident in this estimate than previously, when we had the same data but from a direct response design? 
+
+. . . 
+
+- What does your confidence depend on? And which of those factors do you have knowledge of / control over? 
+
+. . . 
+
+- When would this estimation procedure break and why? How could we fix that?
+
+## Randomised Response - Privacy Schematic 
+
+```{r randomised-response-privacy}
+#| echo: false
+#| fig-align: center
+#| out-width: "100%"
+knitr::include_graphics("images/randomised-response-privacy.png")
+```
+
+## Randomised Response 
+
+- Approach to privacy for single, binary response. 
+
+- Issues with applying to multiple questions, e.g. surveys with follow on questions. 
+
+- Extensions to categorical and continuous responses and predictors 
+
+- General principle of adding noise
+  - Need to make observations indistinguishable
+  - Need to preserve important aspects of "signal"
+
+## Data Collection Summary 
+
+- _Collect what you need_ and use that information only for its intended purpose.
+
+- _Targeting hard-to-reach populations can be challenging_ but possible by combining survey design and specific learning approaches. Keeps statisticians in a job!
+
+- _Asking difficult questions_ can lead to biased responses. Plausible deniability through randomised response designs can help.
+
+# 2. Data Storage {background-color="#555555"}
+
+## Encryption 
+
+Once we have gone to the effort of collecting data we don't want to just leave it lying around for anyone to access. 
+
+::::{.columns}
+:::{.column width="50%"}
+<br>
+$$ \text{Plain text} \overset{f}{\rightarrow} \text{Cipher Text}$$
+<br>
+$$ \text{Cipher text} \overset{f^{-1}}{\rightarrow} \text{Plain Text}$$
+<br>
+$$ f(\text{data}, \text{key})$$
+Many encryption schemes depending on the data to be encrypted and how the key is to be distributed. 
+:::
+:::{.column width="50%"}
+```{r encryption}
+#| echo: false
+#| fig-align: center
+#| out-width: "80%"
+knitr::include_graphics("images/encryption.png")
+```
+:::
+::::
+
+## Caesar Cipher 
+
+```{r caesar}
+#| echo: false
+#| fig-align: center
+#| out-width: "70%"
+knitr::include_graphics("images/caesar-cipher-zak.png")
+```
+
+. . .
+
+Have a go at decrypting the encrypted message f(?, 2 ) = JGNNQ YQTNF.
+
+. . . 
+
+What are some benefits and drawbacks of this encryption scheme?
+
+
+## K-anonymity {.incremental}
+
+What happens if someone gets access to the data? 
+
+<br> 
+
+- $k$-anonymity is a measure of privacy within a dataset. 
+
+- Given a set of predictor-outcome responses, each unique combination forms an _equivalence class_. 
+
+- The smallest equivalence class of a $k$-anonymous dataset is of size $k$.
+
+- Equivalently, each individual is indistinguishable from at least $k-1$ others.
+
+## K-anonymity Example 
+
+```{r k-anon-survey}
+#| echo: false
+#| fig-align: center
+#| out-width: "100%"
+knitr::include_graphics("images/k-anon-survey.png")
+```
+
+## K-anonymity Worked Example 
+
+```{r k-anon-example}
+#| echo: false
+#| fig-align: center
+knitr::include_graphics("images/k-anon-example.png")
+```
+
+## K-anonymity Your Turn
+
+I asked ChatGPT to generate 4-anonymous datasets but it hasn't done a good job.
+    
+- Establish the true value of k for your dataset.
+
+- Use pseudonymisation, aggregation, redaction and partial-redaction to make your dataset 4-anonymous.
+
+## K-anonymity Feedback 
+
+- How did ChatGPT do?
+- How did you alter the anonymity level of your dataset?
+- What did you have to consider as you were doing this?
+
+## K-anonymity Drawbacks 
+
+What do you think some of the limitations of $k$-anonymity might be? 
+
+. . . 
+
+- Knowing what is important before analysis. 
+- Publishing multiple versions of the dataset. 
+- Can be checked easily but not implemented algorithmically.
+- External data attacks; Jane Doe, Latanya Sweeney 
+
+## Data Storage - Summary 
+
+- Don't leave important data lying around unprotected. 
+- Choose a level of security appropriate to the sensitivity of the data.
+
+- Consider the consequences of someone gaining access to the data. 
+- Remember that your data does not live in isolation. 
+
+- K-anonymity not a good measure of privacy but an accessible starting point.
+
+# 3. Data Analytics {background-color="#555555"}
+
+## Federated Computation and Analytics
+
+- Data can be vulnerable while in transport 
+
+- Might be too risky to send individual data items
+ 
+- Summary Statistics are often sufficient 
+
+- These can be transmitted from individual data centres (clients), e.g. hospitals within a local authority (server).
+
+
+## What is Federation? 
+
+<br>
+
+Federated data is _decentralised_ - it is not all stored in one place. 
+
+. . . 
+
+::::{.columns}
+:::{.column width="60%"}
+<br>
+
+Federated _Computing_
+
+<br>
+
+Federated _Analytics_
+
+<br>
+
+Federated _Learning_
+
+<br>
+
+Federated _Validation_
+:::
+:::{.column width="40%"}
+Two common examples: where data remains with client
+
+<br> <br> <br>
+
+- Mobile data (Text suggestions)
+- Medical data (Healthcare Monitoring)
+:::
+::::
+
+
+## Federation Networks 
+
+<br>
+
+We can formalise how information sources are connected as a graph structure known as an empirical graph.
+
+<br>
+
+Nodes represent users or data sources, while edges represent data sharing capabilities. 
+
+
+
+## Centralised Federation
+
+
+![](images/centralised-federation.png)
+
+:::{.notes}
+The simplest federation structure has each client connected to a single server. This results in a star-like empirical graph.  Somewhat tautologically, this is also known as centralised federated learning.
+
+The goal here is to co-train a single model for all clients, which is contained within the server, but the data on which that model is trained, tested and validated remains with each client. 
+:::
+
+## Clustered Federated Learning
+
+![](images/clustered-federation.png)
+
+:::{.notes}
+Alternatively, we might want provide different models to clients according to which group they belong with. 
+
+These groups might be known a priori (e.g. through metadata on the clients) or might be determined by clustering the clients in some way (e.g. using the statistical similarity between the data or model parameters that they hold). 
+
+Things can of course become more complicated - we might have independent models for each cluster or each might be part some potentially deep hierarchical structure of clusters and super-clusters. 
+
+Things get even more complex in this case if we are modelling over time, where the models for each cluster need to be kept up to date and clients could potentially move between clusters. 
+:::
+
+## Personalised Federated Learning 
+
+![](images/personalised-federation.png)
+
+:::{.notes}
+One extreme case of clustered federated learning is centralised FL - the other extreme is personalised FL. 
+
+In this arrangement each client has their own model. 
+
+Again these individual models might be independent or they might be coupled in some way. An analogy here is a longitudinal study where each client is a study participant and we use a model with random intercepts and slopes.
+:::
+
+## Directions of Federation
+
+<br>
+
+::::{.columns}
+:::{.column width="45%"}
+### Horizontal Federation
+![](images/horizontal-federation.png)
+:::
+:::{.column width="10%"}
+:::
+:::{.column width="45%"}
+### Vertical Federation
+![](images/vertical-federation.png)
+:::
+::::
+
+:::{.notes}
+The empirical graph describes how information is shared within a federation network, but does not describe the types of information that are shared. This leads us on to two new terms: horizontal and vertical federation. 
+
+### Horizontal federation
+
+In Horizontal federation the same predictors and responses are available at all clients but particular instances of these are split between clients (potentially with overlap).
+
+If we consider a design matrix for our learning problem, this corresponds to different rows of our data being stored by the various clients. 
+
+Federated Learning in this sense is a bit like a meta-analysis on steroids, our centralised model gains power from a collection of federated datasets each of the same form.
+
+### Vertical Federation 
+
+You might be able to now extrapolate to vertical federation. 
+
+In this set up, each client contains a different subset of the predictors that are used by the server model. Importantly, each of these predictors is recorded for the same instances (e.g. health data sorted by different medical practices, or screen time on macbook, ipad and iphone for a given apple ID)
+
+In vertical federation, each row of our design matrix is present in each client data set but each client hold only have a small subset of all the columns (or predictors).
+:::
+
+## Why bother with Federated Learning? 
+
+::::{.columns}
+:::{.column width="45%"}
+<br> <br>
+
+`r emo::ji("check")` Easy to explain
+
+<br>
+
+`r emo::ji("check")` No loss of information 
+
+<br>
+
+`r emo::ji("check")` Lower computational costs
+:::
+:::{.column width="10%"}
+:::
+:::{.column width="45%"}
+<br> <br>
+
+`r emo::ji("x")` Client or individual information still vulnerable
+
+<br>
+
+`r emo::ji("x")` Combining local information is hard
+
+<br>
+
+`r emo::ji("x")` Exacerbates existing modelling issues
+:::
+::::
+
+:::{.notes}
+
+- Easy to explain that data does not move
+- No loss of information by obfuscating or aggregating 
+- Lower computational costs than standard encryption methods 
+
+
+- Small sample at client or high influence clients can still expose information in aggregated model. 
+- how to properly combine local information into global model requires careful consideration
+- Further complicates existing modelling issues
+  - missing data + non-response
+  - imbalanced dat + super-clients
+  - data/concept drift + sampling frequency
+  - parallel computation + differences in software/hardware/capability
+:::
+
+
+## Encryption
+
+Pass data $x$ through some function $E$ with inverse $E^{-1}=D$: 
+  
+  - Inversion easy with some extra information available to trusted individuals
+  - Inversion very difficult otherwise.
+
+. . . 
+
+_Pros_
+
+  - Data security when in storage or transit.
+  - Reduce associated costs.
+
+. . . 
+
+_Cons_ 
+
+  - Can't compute on $x$ without first decrypting.
+  
+
+## Malleability 
+
+:::{.fragment}
+$$f(E[x]) = E[f(x)]$$
+:::
+
+:::{.fragment}
+This need not literally be the same function:
+$$g(E[x]) = E[f(x)].$$
+:::
+
+:::{.incremental}
+- Predictable modification without decryption (+/-)
+- Outsource computation with our compromising security / privacy
+  - company can keep model private from hosting service 
+  - customer can keep data private from host and provider
+  - still vulnerable to repeated query attacks.
+:::
+
+## Fully Homomorphic Encryption 
+
+(Fully) Homomorphic encryption is an emerging technology in private ML. 
+
+<br>
+
+_Homomorphic encryption schemes_ allow $f$ to be addition: 
+
+$$E[x] \oplus E[y]= E[x + y].$$
+_Fully homomorphic encryption schemes_ additionally allow $f$ multiplication:
+
+$$E[x] \otimes E[y]= E[x \times y].$$
+
+This allows us to construct polynomial approximations to ML models.
+
+. . . 
+
+- How closely can our model be approximated by a polynomial? 
+- Practical issues with imperfect data storage and large number of compositions.
+
+
+# 4. Modelling {background-color="#555555"}
+
+## Privacy through modelling constraints 
+
+The core idea of differential privacy is that we want to ensure that no individual data point influences the model "too much". 
+
+::::{.columns}
+:::{.column width="55%"}
+:::{.fragment}
+__Strategies:__
+
+- Add noise to individual data entries or summary statistics. Similar to robust regression (median modelling, heavy-tailed noise)
+
+- Combine goodness of fit and sensitivity penalty in loss function. Similar to penalised regression.
+  
+$$ L(\theta, x; \lambda) = \underset{\text{likelihood /} \\ \text{model fit}}{\underbrace{\ell(\theta, x)}} - \lambda \underset{\text{sensitivity} \\ \text{penality}}{\underbrace{h(\theta, x)}}$$
+:::
+:::
+:::{.column width="45%"}
+
+```{r high-leverage-point}
+#| fig-width: 4
+#| fig-height: 6
+#| out-width: 70%
+#| fig-align: center
+set.seed(4321)
+x <- rgamma(n = 30, shape = 1, rate = 1)
+y <- 3*x + 2 + rnorm(30)
+x_leverage <- 3.5 
+y_leverage <- 3
+
+lm1 <- lm(y~x)
+lm2 <- lm(c(y,y_leverage) ~ c(x, x_leverage))
+
+par(bg = NA)
+plot(x,y, pch = 16, bty = "n")
+points(x = x_leverage, y = y_leverage, pch = 16, col = zvplot::zv_orange)
+abline(coefficients(lm1), lwd = 2)
+abline(coefficients(lm2), lwd = 2, col = zvplot::zv_orange)
+```
+:::
+::::
+
+## Federated Learning
+
+Similar idea to federated analytics but communicating e.g. gradient of loss function using local data. 
+
+<br>
+
+::::{.columns}
+:::{.column width="50%"}
+- This means that data stays with user, only partial model updates are transmitted. 
+
+-  Strong links to distributed computing and this is how Apple (and others) collect performance data from phones. 
+
+Have to take care with non-responses so as not to bias the model.
+:::
+:::{.column width="50%"}
+```{r centralised-federated-learning}
+#| echo: false
+#| fig-align: center
+knitr::include_graphics("images/centralised-federation.png")
+```
+:::
+::::
+
+# 5. Going into Production {background-color="#555555"}
+
+## Privacy of the model 
+
+Putting a model into production exposes a whole range of adversarial circumstances. Two of the most common would be:
+
+::::{.columns}
+:::{.column width="50%"}
+- Attacks aiming to recover model structure
+  - to reproduce the model
+  - to exploit weaknesses
+- Attacks aiming to recover individual training data
+- Examples would be financial decision making and LLMs.
+:::
+:::{.column width="50%"}
+
+```{r privacy-attacks-paper}
+#| echo: false
+#| fig-align: center
+knitr::include_graphics("images/rigaki-garcia-2020.png")
+```
+[Rigaki, M. & Garcia, S. (2020)](https://arxiv.org/abs/2007.07646). “A Survey of Privacy Attacks in Machine Learning”. ArXiv preprint.
+:::
+::::
+
+# Wrapping up {background-color="#555555"}
+
+## Summary 
+
+Three things to remember from this workshop 
+
+<br>
+
+1. Privacy can become compromised at all stages of the ML pipeline.
+
+<br>
+
+2. Core methods rely on some combination of localisation, encryption and noise.
+
+<br>
+
+3. As in life, you can't do anything useful without risk but you can minimise those risks.
+
+
+## Learning More
+
+::::{.columns}
+:::{.column width="50%"}
+```{r ethical-algorithm}
+#| echo: false
+#| fig-align: center
+knitr::include_graphics("images/ethical-algorithm-cover.jpg")
+```
+:::
+:::{.column width="50%"}
+```{r data-science-ethics}
+#| echo: false
+#| fig-align: center
+knitr::include_graphics("images/data-science-ethics-cover.jpg")
+```
+:::
+::::
+
+
+## Build Information {.smaller}
+
+```{r}
+pander::pander(sessionInfo())
+```
+
+## References

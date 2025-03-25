@@ -1,0 +1,335 @@
+---
+title: "Introduction to Random Forests"
+subtitle: "(via bootstrap aggregation, in ten minutes or less)"
+author: Zak Varty
+date: ""
+editor: source
+format:
+  revealjs:
+    theme: assets/zv-slides-theme.scss
+    logo: assets/zv-logo-192x192.png
+    bibliography: assets/refs.bib
+    footer: " November 2024 - Zak Varty"
+    menu: true
+    slide-number: true
+    show-slide-number: all # (all / print / speaker)
+    self-contained: true # (set to true before publishing html to web)
+    width: 1600 # default is 1050
+    height: 900 # default is 850
+    incremental: false
+---
+
+```{r}
+library(palmerpenguins)
+library(dplyr)
+library(ggplot2)
+library(glue)
+library(rpart)
+library(rpart.plot)
+```
+
+## Classification and Regression Trees -  Recap
+
+::::{.columns} 
+:::{.column width="50%"}
+- Partition predictor space and predict modal/mean outcome in each subregion.
+- Sequential, conditional "cuts" perpendicular to predictor axes
+- Continue splitting until stopping criteria met
+  - e.g. change in residual deviance is small.
+:::
+:::{.column width="50%"}
+
+```{r}
+peng <- penguins %>% select(species, bill_length = bill_length_mm, bill_depth = bill_depth_mm)
+
+#ggplot() +
+#  geom_point(aes(x = bill_length, y = bill_depth, colour=species), data = peng) #+
+#  theme_minimal()
+
+tree <- rpart(species ~ bill_length + bill_depth, data = peng, method = "class")
+rpart.plot(tree, main = "Decision Tree for the Palmer Penguins Dataset")
+
+peng_grid <- tibble(
+  bill_length = rep(seq(30, 60, by = 0.1), each = 131),
+  bill_depth = rep(seq(12, 25, by = 0.1), times = 301),
+)
+
+peng_grid$prediction <- rpart.predict(tree, newdata = peng_grid, type = "class")
+```
+
+:::
+::::
+
+## Classification and Regression Trees - Recap 
+
+::::{.columns}
+:::{.column width="50%"}
+
+- Easily interpretable model
+- bias-variance trade-off 
+  - decision boundaries bisect (continuous) data points, so are very sensitive to individual data point values. 
+  - This is a low-bias high-variance model but we want one that generalises well. 
+  
+:::
+:::{.column width="50%"}
+```{r}
+ggplot() +
+  geom_raster(aes(x = bill_length, y = bill_depth, fill=prediction), data = peng_grid, alpha = 0.3) +
+  geom_point(aes(x = bill_length, y = bill_depth, colour=species), data = peng) +
+  zvplot::theme_zv()
+```
+:::
+::::
+
+## Solution 1: Bagging 
+
+If $Y_1, \ldots,Y_n$ are independent RVs with variance $\sigma^2$ then 
+
+$$ \text{Var}(\bar Y) = \text{Var}\left(\frac{1}{n}\sum_{i=1}^{n} Y_i\right) = \frac{\sigma^2}{n}.$$
+This suggests that we could reduce the sensitivity of our tree-based predictions to the particular values in our dataset by: 
+
+- Taking many training sets
+- Fitting a decision tree to each
+- Averaging the predictions made by each tree. 
+
+. . . 
+
+This is the first example of an ensemble model. Common in weather/hazard modelling.
+
+## Bagging
+
+**Issue: we only have one set of training data.** 
+
+_Bootstrap_ Aggregation
+
+1. Re-sample with replacement our original data $x$, $B$ times: $\{x^1,\ldots,x^2,x^B\}$.
+2. Fit tree $\hat f_b(x)$ using $x^b$ for $b$ in $1,\ldots,B$.
+3. Take our ensemble prediction as the mean (mode) of all regression (classification) tree predictions.
+
+$$ \hat f(x) = \frac{1}{B}\sum_{i=1}^{n}\hat f_b(x).$$
+
+> **Claim:** This has a stabilising effect, reducing sensitivity to the particular data values we observe. 
+
+## Bagging - Example (Bootstrap 1)
+
+```{r}
+ggplot() +
+    geom_point(aes(x = bill_length, y = bill_depth, colour=species), data = peng, alpha = 0.5, size = 2) +
+    lims(x = c(30,60), y = c(12.5, 22.5)) +
+    zvplot::theme_zv() +
+    ggtitle("Take the original data")
+```
+
+## Bagging - Example (Bootstrap 1)
+
+```{r}
+b <- 1
+i <- sample(1:nrow(peng), nrow(peng), replace = TRUE)
+peng_b <- peng[i,]
+ggplot() +
+    geom_point(aes(x = bill_length, y = bill_depth, colour=species), data = peng_b, alpha = 0.5, size = 2) +
+    lims(x = c(30,60), y = c(12.5, 22.5)) +
+    zvplot::theme_zv() +
+    ggtitle(glue("Resample with replacement to get bootstrap sample b={b}"))
+```
+
+## Bagging - Example (Bootstrap 1)
+
+Fit a classification tree $\hat f_1(x)$ to the first bootstrapped data set 
+
+<br> <br>
+
+```{r}
+#| layout-ncol: 2
+  tree_b <- rpart(species ~ bill_length + bill_depth, data = peng_b, method = "class")
+  rpart.plot(tree_b, main = "Classification tree for the first bootstrapped dataset", sub = glue("Bootstrap sample b={b}"))
+
+  peng_grid[,b+3] <- rpart.predict(tree_b, newdata = peng_grid, type = "class")
+  names(peng_grid)[b + 3] <- glue("b_{b}")
+
+  ggplot() +
+    geom_raster(aes(x = bill_length, y = bill_depth, fill = .data[[glue("b_{b}")]]), data = peng_grid, alpha = 0.3, ) +
+    geom_point(aes(x = bill_length, y = bill_depth, colour=species), data = peng_b, alpha = 0.5) +
+    zvplot::theme_zv() +
+    ggtitle("Classification Tree Predictions", glue("bootstrap sample b={b}"))
+```
+
+## Bagging - Example (Bootstrap 2)
+
+```{r}
+ggplot() +
+    geom_point(aes(x = bill_length, y = bill_depth, colour=species), data = peng, alpha = 0.5, size = 2) +
+    lims(x = c(30,60), y = c(12.5, 22.5)) +
+    zvplot::theme_zv() +
+    ggtitle("Take the original data, again")
+```
+
+## Bagging - Example (Bootstrap 2)
+
+```{r}
+b <- 2
+i <- sample(1:nrow(peng), nrow(peng), replace = TRUE)
+peng_b <- peng[i,]
+ggplot() +
+    geom_point(aes(x = bill_length, y = bill_depth, colour=species), data = peng_b, alpha = 0.5, size = 2) +
+    lims(x = c(30,60), y = c(12.5, 22.5)) +
+    zvplot::theme_zv() +
+    ggtitle(glue("Resample with replacement to get another bootstrap sample b={b}"))
+```
+
+## Bagging - Example (Bootstrap 2)
+
+Fit a classification tree $\hat f_2(x)$ to the second bootstrapped data set 
+
+<br> <br>
+
+```{r}
+#| layout-ncol: 2
+  tree_b <- rpart(species ~ bill_length + bill_depth, data = peng_b, method = "class")
+  rpart.plot(tree_b, main = "Classification tree for the first bootstrapped dataset", sub = glue("Bootstrap sample b={b}"))
+
+  peng_grid[,b+3] <- rpart.predict(tree_b, newdata = peng_grid, type = "class")
+  names(peng_grid)[b + 3] <- glue("b_{b}")
+
+  ggplot() +
+    geom_raster(aes(x = bill_length, y = bill_depth, fill = .data[[glue("b_{b}")]]), data = peng_grid, alpha = 0.3, ) +
+    geom_point(aes(x = bill_length, y = bill_depth, colour=species), data = peng_b, alpha = 0.5) +
+    zvplot::theme_zv() +
+    ggtitle("Classification Tree Predictions", glue("bootstrap sample b={b}"))
+```
+
+
+
+## Bagging - Example (Repeat)
+
+```{r}
+tree <- rpart(species ~ bill_length + bill_depth, data = peng, method = "class")
+
+peng_grid <- tibble(
+  bill_length = rep(seq(30, 60, by = 0.1), each = 131),
+  bill_depth = rep(seq(12, 25, by = 0.1), times = 301),
+)
+
+peng_grid$prediction <- rpart.predict(tree, newdata = peng_grid, type = "class")
+
+  
+plots <- list()
+set.seed(1234)
+for (b in 1:15) {
+  i <- sample(1:nrow(peng), nrow(peng), replace = TRUE)
+  peng_b <- peng[i,]
+
+  tree_b <- rpart(species ~ bill_length + bill_depth, data = peng_b, method = "class")
+
+  peng_grid[,b+3] <- rpart.predict(tree_b, newdata = peng_grid, type = "class")
+  names(peng_grid)[b + 3] <- glue("b_{b}")
+
+  plots[[b]] <- ggplot() +
+    geom_raster(aes(x = bill_length, y = bill_depth, fill = .data[[glue("b_{b}")]]), data = peng_grid, alpha = 0.3, ) +
+    geom_point(aes(x = bill_length, y = bill_depth, colour=species), data = peng_b, alpha = 0.5) +
+    zvplot::theme_zv() +
+    ggtitle("Decision Tree Predictions", glue("bootstrap sample b={b}"))
+}
+```
+
+```{r}
+#| layout-ncol: 4
+plots[[1]]
+plots[[2]]
+plots[[3]]
+plots[[4]]
+plots[[5]]
+plots[[6]]
+plots[[7]]
+plots[[8]]
+plots[[9]]
+plots[[10]]
+plots[[11]]
+plots[[12]]
+``` 
+
+## Bagging - Example (Aggregate)
+
+Take point-wise modal class over all trees as prediction. 
+
+```{r}
+#| fig-align: center
+library(DescTools)
+peng_grid$bag_pred <- apply(X = peng_grid[,4:18],MARGIN = 1, FUN = Mode) 
+peng_grid$bag_pred <- as.factor(peng_grid$bag_pred)
+
+ggplot() +
+    geom_raster(aes(x = bill_length, y = bill_depth, fill = .data[["bag_pred"]]), data = peng_grid, alpha = 0.3) +
+    geom_point(aes(x = bill_length, y = bill_depth, colour=species), data = peng, alpha = 0.5) +
+    zvplot::theme_zv() +
+    ggtitle("Bagged Tree Predictions")
+```
+
+## Bagging - Summary 
+
+<br>
+
+- ✅ Reduced variance of final model, as compared to a single tree.
+- ✅ Built-in holdout sets for cross validation using "out of bag" points. 
+
+. . . 
+
+<br>
+
+- `r emo::ji("cross mark")` Non-parametric bootstrap means we only see the same values as in our original data.
+- `r emo::ji("cross mark")` Aggregating trees destroys the interpretability of the model.
+- `r emo::ji("cross mark")` Each of the trees we are aggregating are likely to be similar. (*)
+
+
+## Random Forests
+
+Suppose we have one very strong predictor and several moderately strong predictors. 
+
+<br>
+
+:::{.incremental}
+- The first cut is going to be in the strong predictor for almost all bagged trees. 
+- Leads to high "correlation" between trees (technically predictions of these trees)
+- Reduces the effective number of trees and the size of variance reduction compared to what we might initially have expected.
+:::
+
+## Random Forests 
+
+Exactly the same as bagging, but using **only a random subset of $m << p$ predictors** to determine each split. 
+
+:::{.fragment}
+Seems like throwing away information, but can help us to reduce the dependence between the trees that we are aggregating.
+:::
+
+<br>
+
+:::{.fragment}
+Generalising what we had before:
+
+$$ \text{Var}(\bar Y) = \frac{\sigma^2}{n} + \underset{\text{minimise this}}{\underbrace{\frac{2}{n} \sum_{i<j} \text{Cov}(Y_i, Y_j)}}.$$ 
+:::
+
+<br>
+
+:::{.fragment}
+> Bioinformatics & multicollinearity: multiple genes expressed together, random subsetting allows us to "spread" the influence on the outcome across these genes.
+:::
+## Random Forest Summary 
+
+> Random forests are an ensemble model, averaging the prediction of multiple regression or classification trees. 
+
+- Bootstrap aggregation reduces variance of the resulting predictions by averaging over multiple data sets that we might have seen.
+
+- Variance is further reduced by considering a random subset of predictors at each split, in order to decorrelate the trees we are aggregating.
+
+. . . 
+
+> Lab: Comparison of single tree, bagging and random forest for student grade prediction.
+
+
+
+## Build Information {.smaller}
+
+```{r}
+pander::pander(sessionInfo())
+```
